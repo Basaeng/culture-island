@@ -1,4 +1,4 @@
-package com.ssafy.cultureisland.member.model;
+package com.ssafy.cultureisland.member;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import java.util.Date;
 
 @Getter @Setter @ToString @AllArgsConstructor
 @NoArgsConstructor
-public class MemberDto {
+public class MemberDTO {
     private Long id;
     private String email;
     private String password;
