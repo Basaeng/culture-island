@@ -17,7 +17,7 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @RequestMapping(value = "findAll", method = RequestMethod.GET)
+    @GetMapping()
     public ResponseEntity<?> findAll() {
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setResultCode("s0001");
@@ -25,8 +25,8 @@ public class MemberController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<?> joinMember(@PathVariable Integer id, @RequestBody MemberDTO memberDTO) throws Exception {
+    @PostMapping()
+    public ResponseEntity<?> joinMember(@RequestBody MemberDTO memberDTO) throws Exception {
 
         try {
             memberService.joinMember(memberDTO);

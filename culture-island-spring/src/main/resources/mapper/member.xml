@@ -9,9 +9,9 @@
         SELECT * FROM member;
     </select>
 
-    <insert id="joinMember" parameterType="MemberDTO">
-        INSERT INTO member (email, password, name, number, birth, gender, rank, imglink, intro)
-        VALUES (#{email}, #{password}, #{name}, #{number}, #{birth}, #{gender}, #{rank}, #{imglink}, #{intro})
+    <insert id="joinMember" parameterType="com.ssafy.cultureisland.member.MemberDTO">
+        INSERT INTO member (email, password, name, number, birth, gender, member_rank, imglink, intro)
+        VALUES (#{email}, #{password}, #{name}, #{number}, #{birth}, #{gender}, #{memberRank}, #{imglink}, #{intro})
     </insert>
 
 </mapper>

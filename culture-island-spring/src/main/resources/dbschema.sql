@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS `cultureisland`.`member` (
     `number` VARCHAR(16) NOT NULL,
     `gender` INT NOT NULL,
     `birth` VARCHAR(32) NOT NULL,
-    `rank` INT NOT NULL DEFAULT 1,
-    `img` VARCHAR(64) NULL,
+    `member_rank` INT NOT NULL DEFAULT 1,
+    `imglink` VARCHAR(64) NULL,
     `intro` VARCHAR(128) NULL,
     PRIMARY KEY (`id`))
     ENGINE = InnoDB;

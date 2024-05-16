@@ -14,8 +14,8 @@ public class MemberDTO {
     private String number;
 
     private Date birth;
-    private String gender;
-    private String rank;
+    private int gender;
+    private int memberRank;
 
     private String imglink;
     private String intro;
