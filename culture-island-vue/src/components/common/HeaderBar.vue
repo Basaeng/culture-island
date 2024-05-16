@@ -34,16 +34,22 @@
               <li><a class="dropdown-item" href="#">공지사항</a></li>
             </ul>
           </li>
-          <li class="nav-item">
-            <a></a>
-          </li>
-          <li class="nav-item">
-            <a></a>
-          </li>
         </ul>
       </div>
 
-      <div></div> 
+      <div class="collapse navbar-collapse" id="navbarScroll">
+        <ul
+          class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
+          style="--bs-scroll-height: 100px"
+        >
+          <li class="nav-item">
+            <a class="nav-link" href="#">로그인</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">로그아웃</a>
+          </li>
+          </ul>
+      </div> 
     </div>
   </nav>
 </template>
