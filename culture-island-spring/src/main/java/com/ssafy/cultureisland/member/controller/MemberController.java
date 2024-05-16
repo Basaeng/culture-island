@@ -25,15 +25,27 @@ public class MemberController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findById(@PathVariable int id){
+        MemberDTO member = memberService.findById(id);
+        
+        return new ResponseEntity<>(member, HttpStatus.OK);
+    }
+
     @PostMapping()
     public ResponseEntity<?> joinMember(@RequestBody MemberDTO memberDTO) throws Exception {
-
         try {
             memberService.joinMember(memberDTO);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteMember(@PathVariable int id) throws Exception {
+        memberService.deleteMember(id);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

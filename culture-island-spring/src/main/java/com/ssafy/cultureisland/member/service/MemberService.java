@@ -21,4 +21,12 @@ public class MemberService {
     public void joinMember(MemberDTO member) throws Exception{
         memberMapper.joinMember(member);
     }
+
+    public void deleteMember(int id) {
+        memberMapper.deleteMember(id);
+    }
+
+    public MemberDTO findById(int id) {
+        return memberMapper.findById(id);
+    }
 }

@@ -14,4 +14,8 @@ public interface MemberMapper {
     List<HashMap<String, Object>> findAll();
 
     void joinMember(MemberDTO member);
+
+    void deleteMember(int id);
+
+    MemberDTO findById(int id);
 }

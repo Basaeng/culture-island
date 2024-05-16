@@ -9,9 +9,31 @@
         SELECT * FROM member;
     </select>
 
+    <select id="findById" resultType="com.ssafy.cultureisland.member.MemberDTO" parameterType="Integer">
+        SELECT * FROM member WHERE id = #{id}
+    </select>
+
     <insert id="joinMember" parameterType="com.ssafy.cultureisland.member.MemberDTO">
         INSERT INTO member (email, password, name, number, birth, gender, member_rank, imglink, intro)
         VALUES (#{email}, #{password}, #{name}, #{number}, #{birth}, #{gender}, #{memberRank}, #{imglink}, #{intro})
     </insert>
 
+    <delete id="deleteMember" parameterType="Integer">
+        DELETE FROM member WHERE id = #{id}
+    </delete>
+
+    <!-- Update a member's information -->
+    <update id="updateMember" parameterType="com.ssafy.cultureisland.member.MemberDTO">
+        UPDATE member
+        SET email = #{email},
+            password = #{password},
+            name = #{name},
+            number = #{number},
+            birth = #{birth},
+            gender = #{gender},
+            member_rank = #{memberRank},
+            imglink = #{imglink},
+            intro = #{intro}
+        WHERE id = #{id}
+    </update>
 </mapper>
