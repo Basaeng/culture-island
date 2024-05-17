@@ -4,20 +4,20 @@ import { UserOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons
 </script>
 
 <template>
-    <div class="col-lg-2 col-sm-2">
-      <nav class="sidenav navbar navbar-expand-lg navbar-light bg-light flex-column">
+    <div class="col-lg-2 col-sm-2 mt-5 d-flex">
+      <nav class="sidenav navbar navbar-expand-lg navbar-light  flex-column">
         <ul class="navbar-nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link active" href="#">1</a>
+          <li class="nav-item mt-5 mb-3 ">
+            <a class="nav-link active" href="#">마이페이지</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">2</a>
+            <a class="nav-link" href="#">관심공연</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">3</a>
+            <a class="nav-link" href="#">내 게시글</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">4</a>
+            <a class="nav-link" href="#">내 프로필</a>
           </li>
         </ul>
       </nav>
@@ -27,13 +27,5 @@ import { UserOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons
 
 <style scoped>
 /* 사이드바 */
-.sidenav {
-    background-color: #f1f1f1;
-    height: 100vh; /* Full height */
-    padding-top: 20px;
-  }
 
-  .sidenav .nav-link {
-    margin: 10px 0;
-  }
 </style>

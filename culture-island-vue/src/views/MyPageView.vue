@@ -6,20 +6,20 @@ import Side from '@/components/mypage/Side.vue';
 
 <template>
   <div class="container-fluid d-flex justify-content-center">
-    <Side class="side-nav"/>
-    <div class="col-lg-4 col-md-6 col-sm-8 page">
+    <Side class="col-2 side-nav"/>
+    <div class="col-lg-6 col-md-6 col-sm-8 page">
+      <div class="mb-5">
       <h3 class="my-3 py-3 shadow-sm bg-light text-center">
           <mark class="island_mark_style">내 프로필</mark>
-        </h3>
-        
-      <div class="mt-4">
-        <img src="../assets/noimg.PNG" alt="프로필">
-      </div>
+      </h3>
     </div>
+      <Profile/>
+    </div>
+    <div class="col-2"></div>
   </div>
 </template>
 
-<style scoped>
+<style>
   /* 본문 */
   
   .page {
@@ -41,4 +41,5 @@ import Side from '@/components/mypage/Side.vue';
 .small-text {
     font-size: 0.8em; /* 텍스트 크기를 작게 조정 */
   }
+
 </style>
