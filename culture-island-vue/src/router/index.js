@@ -8,6 +8,7 @@ import BoardModify from "@/components/boards/BoardModify.vue";
 import BoardWrite from "@/components/boards/BoardWrite.vue";
 
 import RegisterView from "@/views/RegisterView.vue";
+import MyPageView from "@/views/MyPageView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,6 +65,16 @@ const router = createRouter({
           component: BoardModify,
         },
       ],
+    },
+    {
+      path: "/",
+      name: "community",
+      component: HomeView,
+    },
+    {
+      path: "/mypage",
+      name: "mypage",
+      component: MyPageView,
     }
   ],
 });

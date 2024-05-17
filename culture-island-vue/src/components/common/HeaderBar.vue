@@ -61,12 +61,15 @@ const closeModal = () => {
 const moveToRegisterPage = () => {
   router.push({ name: 'register' })
 }
+const moveToMyPage = () => {
+  router.push({ name: 'mypage' })
+}
 </script>
 
 <template>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-      <router-link class="navbar-brand col-md-3 ms-md-5" to="/">Culture.island</router-link>
+      <router-link class="navbar-brand col-md-3 ms-md-5" :to="{name: 'home'}">Culture.island</router-link>
       <button
         class="navbar-toggler"
         type="button"
@@ -128,7 +131,7 @@ const moveToRegisterPage = () => {
             </a>
           </li>
           <button v-if="!isAuthenticated" class="btn island_button_style" type="button" @click="moveToRegisterPage">회원가입</button>
-          <button v-if="isAuthenticated" class="btn island_button_style" type="button" @click="moveToRegisterPage">마이페이지</button>
+          <button v-if="isAuthenticated" class="btn island_button_style" type="button" @click="moveToMyPage">마이페이지</button>
         </ul>
       </div>
     </div>
