@@ -103,7 +103,10 @@ const moveToMyPage = () => {
               커뮤니티
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">게시판</a></li>
+              <li>
+                <!-- <a class="dropdown-item" href="#">게시판</a> -->
+                <router-link :to="{name: 'board'}" class="dropdown-item">게시판</router-link>
+              </li>
               <li><a class="dropdown-item" href="#">공지사항</a></li>
             </ul>
           </li>
