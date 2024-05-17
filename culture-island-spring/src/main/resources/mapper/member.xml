@@ -13,6 +13,10 @@
         SELECT * FROM member WHERE id = #{id}
     </select>
 
+    <select id="findByUsername" resultType="com.ssafy.cultureisland.member.MemberDTO" parameterType="String">
+        SELECT * FROM member WHERE name = #{name}
+    </select>
+
     <insert id="joinMember" parameterType="com.ssafy.cultureisland.member.MemberDTO">
         INSERT INTO member (email, password, name, number, birth, gender)
         VALUES (#{email}, #{password}, #{name}, #{number}, #{birth}, #{gender})

@@ -1,15 +1,23 @@
 package com.ssafy.cultureisland.config;
 
+import com.ssafy.cultureisland.member.service.MemberService;
+import com.ssafy.cultureisland.util.jwtutil.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -18,7 +26,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity
 @Configuration
 @RequiredArgsConstructor
-public class SecurityConfig{
+public class SecurityConfig {
+
+    private final MemberService memberService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public static BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -45,7 +56,10 @@ public class SecurityConfig{
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                 )
-                .authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll()) // 모든 요청에 대해 인증 없이 접근 허용
+                .authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll()
+                        )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                // 모든 요청에 대해 인증 없이 접근 허용
                 .build();
     }
 
@@ -60,5 +74,18 @@ public class SecurityConfig{
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(memberService);
+        authProvider.setPasswordEncoder(bCryptPasswordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }

@@ -18,4 +18,6 @@ public interface MemberMapper {
     void deleteMember(int id);
 
     MemberDTO findById(int id);
+
+    MemberDTO findByUsername(String username);
 }
