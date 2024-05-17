@@ -7,12 +7,14 @@ import com.ssafy.cultureisland.member.model.ResponseDTO;
 import com.ssafy.cultureisland.member.service.MemberService;
 import com.ssafy.cultureisland.util.jwtutil.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -40,11 +42,24 @@ public class MemberController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/member/{id}")
     public ResponseEntity<?> findById(@PathVariable int id){
         MemberDTO member = memberService.findById(id);
         
         return new ResponseEntity<>(member, HttpStatus.OK);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getMemberDetails(@RequestHeader HttpHeaders headers) {
+        String authorizationHeader = headers.getFirst(HttpHeaders.AUTHORIZATION);
+        System.out.println("Authorization Header: " + authorizationHeader);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        System.out.println("currentName: "+ currentUserName);
+        MemberDTO member = memberService.findByUsername(currentUserName);
+        System.out.println("member: " + member);
+        return ResponseEntity.ok(member);
     }
 
     @PostMapping()

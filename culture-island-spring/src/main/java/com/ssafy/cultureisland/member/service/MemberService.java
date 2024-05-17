@@ -46,6 +46,10 @@ public class MemberService implements UserDetailsService {
         return memberMapper.findById(id);
     }
 
+    public MemberDTO findByUsername(String username) {
+        return memberMapper.findByUsername(username);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         MemberDTO member = memberMapper.findByUsername(username);

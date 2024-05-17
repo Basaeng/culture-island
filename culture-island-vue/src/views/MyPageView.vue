@@ -2,6 +2,37 @@
 import MemberInfo from '@/components/mypage/MemberInfo.vue';
 import Profile from '@/components/mypage/Profile.vue';
 import Side from '@/components/mypage/Side.vue';
+import { useAuthStore } from '@/stores/auth';
+import { Axios } from '@/util/http-common';
+import { storeToRefs } from 'pinia';
+import { onMounted, ref } from 'vue';
+
+const authStore = useAuthStore()
+const { isAuthenticated } = storeToRefs(authStore)
+const http = Axios()
+const member = ref(null)
+
+const getMemberDetails = () => {
+  http.get(`member/me`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`
+    }
+  }).then(({data})=>{
+      member.value = data;
+      console.log(data)
+  }).catch ((error)=>{
+    console.error('Failed to fetch user details', error);
+  })
+}
+
+
+onMounted(() => {
+  if (isAuthenticated.value) {
+    getMemberDetails();
+  } else {
+    console.error('User is not authenticated');
+  }
+});
 </script>
 
 <template>
@@ -13,7 +44,7 @@ import Side from '@/components/mypage/Side.vue';
           <mark class="island_mark_style">내 프로필</mark>
       </h3>
     </div>
-      <Profile/>
+    <Profile v-if="member" :member="member"/>
     </div>
     <div class="col-2"></div>
   </div>

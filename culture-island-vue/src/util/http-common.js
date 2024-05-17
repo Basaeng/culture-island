@@ -9,7 +9,19 @@ function Axios() {
       'Content-Type': 'application/json;charset=utf-8'
     }
   })
-  return instance
+
+  // 요청 인터셉터 설정
+  instance.interceptors.request.use((config) => {
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  }, (error) => {
+    return Promise.reject(error);
+  });
+
+  return instance;
 }
 
 export { Axios }
