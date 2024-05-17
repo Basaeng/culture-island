@@ -1,15 +1,43 @@
 <script setup>
+import { useAuthStore } from '@/stores/auth';
 import { Axios } from '@/util/http-common';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-
+const router = useRouter()
 const http = Axios();
 
+const username = ref('')
+const password = ref('')
+const authStore = useAuthStore()
+
+const login = () => {
+  const request = {
+    username: username.value,
+    password: password.value
+  }
+
+  http.post(`/member/login`, request)
+    .then((response) => {
+      authStore.setToken(response.data.token)
+      const redirect = router.currentRoute.value.query.redirect || '/'
+      router.push(redirect)
+    })
+    .catch((error) => {
+      console.log('Error logging in:', error)
+    })
+}
+
+
+const moveToRegisterPage = () => {
+  router.push({name: 'register'})
+}
 </script>
 
 <template>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-      <a class="navbar-brand col-md-3 ms-md-5" href="#">Culture.island</a>
+      <a class="navbar-brand col-md-3 ms-md-5" href="/">Culture.island</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -63,7 +91,7 @@ const http = Axios();
                     >로그인</a
                   >
           </li>
-          <button class="btn island_button_style" type="submit">회원가입</button>
+          <button class="btn island_button_style" type="button" @click="moveToRegisterPage">회원가입</button>
         </ul>
       </div>
     </div>
@@ -91,17 +119,18 @@ const http = Axios();
           <form @submit.prevent="login">
             <div class="mb-3">
               <label for="loginId">아이디 : </label>
-              <input type="text" name="loginId" class="form-control" id="loginId" required />
+              <input type="text" name="loginId" class="form-control" id="loginId" v-model="username" required />
               <div class="invalid-feedback">아이디를 입력해주세요.</div>
             </div>
 
             <div class="mb-3">
               <label for="loginPwd">비밀번호 : </label>
-              <input type="password" name="loginPwd" class="form-control" id="loginPwd" required />
+              <input type="password" name="loginPwd" class="form-control" id="loginPwd" v-model="password" required />
               <div class="invalid-feedback">비밀번호를 입력해주세요.</div>
             </div>
-            <div class="d-flex justify-content-center">
-              <button type="submit" class="btn island_button_style" id="LOGIN">로그인</button>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="ms-1"><a class="text-secondary text-decoration-underline" href="/register">회원가입</a></span>
+              <button type="me-1 submit" class="btn island_button_style " id="LOGIN">로그인</button>
             </div>
           </form>
         </div>
