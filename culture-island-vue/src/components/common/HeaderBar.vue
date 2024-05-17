@@ -1,4 +1,10 @@
-<script setup></script>
+<script setup>
+import { Axios } from '@/util/http-common';
+
+
+const http = Axios();
+
+</script>
 
 <template>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -47,13 +53,73 @@
         </a-badge>
         <ul class="navbar-nav me-5 mb-2 ms-md-auto mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" id="island_color" href="#">로그인</a>
+                  <a
+                    class="nav-link island_color"
+                    id="island_color"
+                    aria-current="page"
+                    href="#"
+                    data-bs-toggle="modal"
+                    data-bs-target="#loginModal"
+                    >로그인</a
+                  >
           </li>
-          <button class="btn" id="island_button_style" type="submit">회원가입</button>
+          <button class="btn island_button_style" type="submit">회원가입</button>
         </ul>
       </div>
     </div>
   </nav>
+
+    <!-- 로그인 모달 -->
+    <div
+    class="modal fade"
+    id="loginModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="d-flex justify-content-center">
+          <div>
+            <br>
+            <h4>로그인</h4>
+          </div>
+        </div>
+
+        <!-- 입력 폼 -->
+        <div class="modal-body">
+          <form @submit.prevent="login">
+            <div class="mb-3">
+              <label for="loginId">아이디 : </label>
+              <input type="text" name="loginId" class="form-control" id="loginId" required />
+              <div class="invalid-feedback">아이디를 입력해주세요.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="loginPwd">비밀번호 : </label>
+              <input type="password" name="loginPwd" class="form-control" id="loginPwd" required />
+              <div class="invalid-feedback">비밀번호를 입력해주세요.</div>
+            </div>
+            <div class="d-flex justify-content-center">
+              <button type="submit" class="btn island_button_style" id="LOGIN">로그인</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+.island_color {
+  color: #920101;
+}
+.island_button_style {
+  background-color: #920101;
+  color: white;
+}
+
+
+
+</style>
