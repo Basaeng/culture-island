@@ -14,8 +14,8 @@
     </select>
 
     <insert id="joinMember" parameterType="com.ssafy.cultureisland.member.MemberDTO">
-        INSERT INTO member (email, password, name, number, birth, gender, member_rank, imglink, intro)
-        VALUES (#{email}, #{password}, #{name}, #{number}, #{birth}, #{gender}, #{memberRank}, #{imglink}, #{intro})
+        INSERT INTO member (email, password, name, number, birth, gender)
+        VALUES (#{email}, #{password}, #{name}, #{number}, #{birth}, #{gender})
     </insert>
 
     <delete id="deleteMember" parameterType="Integer">

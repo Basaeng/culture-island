@@ -5,18 +5,19 @@ import com.ssafy.cultureisland.member.model.ResponseDTO;
 import com.ssafy.cultureisland.member.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin(origins = { "*" }, maxAge = 60000)
 @RestController
 @RequestMapping(value = "/member")
 public class MemberController {
 
-    private MemberService memberService;
+    private final MemberService memberService;
 
     public MemberController(MemberService memberService) {
         this.memberService = memberService;
     }
-
     @GetMapping()
     public ResponseEntity<?> findAll() {
         ResponseDTO responseDTO = new ResponseDTO();

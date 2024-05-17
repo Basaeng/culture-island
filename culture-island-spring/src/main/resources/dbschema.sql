@@ -22,7 +22,7 @@ DROP TABLE IF EXISTS `cultureisland`.`member` ;
 CREATE TABLE IF NOT EXISTS `cultureisland`.`member` (
                                                         `id` INT NOT NULL AUTO_INCREMENT,
                                                         `email` VARCHAR(32) NOT NULL,
-    `password` VARCHAR(32) NOT NULL,
+    `password` VARCHAR(255) NOT NULL,
     `name` VARCHAR(16) NOT NULL,
     `number` VARCHAR(16) NOT NULL,
     `gender` INT NOT NULL,
@@ -30,7 +30,9 @@ CREATE TABLE IF NOT EXISTS `cultureisland`.`member` (
     `member_rank` INT NOT NULL DEFAULT 1,
     `imglink` VARCHAR(64) NULL,
     `intro` VARCHAR(128) NULL,
-    PRIMARY KEY (`id`))
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `unique_email` (`email` ASC),
+    UNIQUE INDEX `unique_name` (`name` ASC))
     ENGINE = InnoDB;
 
 
