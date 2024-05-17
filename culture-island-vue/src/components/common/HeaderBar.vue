@@ -37,7 +37,19 @@ const login = () => {
 }
 
 const logout = () => {
-  
+  authStore.clearToken();
+      alert("안녕히가세요.")
+      const redirect = router.currentRoute.value.query.redirect || '/'
+  router.push(redirect)
+      //추후 필요시 블랙 리스트 처리
+  // http.post(`/member/logout`)
+  //   .then((response) => {
+  //     alert("안녕히가세요.")
+  //     const redirect = router.currentRoute.value.query.redirect || '/'
+  //     router.push(redirect)
+  // })    .catch((error) => {
+  //     console.log('Error during logout:', error)
+  //   })
 }
 
 const closeModal = () => {
@@ -98,7 +110,7 @@ const moveToRegisterPage = () => {
         </a-badge>
         <ul class="navbar-nav me-5 mb-2 ms-md-auto mb-lg-0">
           <li v-if="isAuthenticated" class="nav-item">
-            <a class="nav-link island_color" href="#">로그아웃</a>
+            <a class="nav-link island_color" @click="logout" href="/">로그아웃</a>
           </li>
           <li v-if="!isAuthenticated" class="nav-item">
             <a
