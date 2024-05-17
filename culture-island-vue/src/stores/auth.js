@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 
 const token = ref(localStorage.getItem('jwt') || '')
 const axios = Axios()
+
 export function useAuthStore() {
   const router = useRouter()
 
@@ -17,7 +18,11 @@ export function useAuthStore() {
     localStorage.removeItem('jwt')
   }
 
-  const isAuthenticated = computed(() => !!token.value)
+  const isAuthenticated = computed(() => {
+    console.log('Token value:', token.value) // 디버깅용 로그 추가
+    return !!token.value // 반환 값 추가
+  })
+
   return {
     token,
     setToken,

@@ -1,6 +1,9 @@
+
 <script setup>
 import { useAuthStore } from '@/stores/auth';
 import { Axios } from '@/util/http-common';
+import { Modal } from 'bootstrap';
+import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -11,6 +14,8 @@ const username = ref('')
 const password = ref('')
 const authStore = useAuthStore()
 
+const { isAuthenticated } = storeToRefs(authStore)
+
 const login = () => {
   const request = {
     username: username.value,
@@ -20,6 +25,9 @@ const login = () => {
   http.post(`/member/login`, request)
     .then((response) => {
       authStore.setToken(response.data.token)
+      closeModal();
+      alert("환영합니다")
+      console.log(isAuthenticated.value)
       const redirect = router.currentRoute.value.query.redirect || '/'
       router.push(redirect)
     })
@@ -28,9 +36,18 @@ const login = () => {
     })
 }
 
+const logout = () => {
+  
+}
+
+const closeModal = () => {
+  const modalElement = document.getElementById('loginModal');
+  const modalInstance = Modal.getInstance(modalElement) || new Modal(modalElement);
+  modalInstance.hide()
+}
 
 const moveToRegisterPage = () => {
-  router.push({name: 'register'})
+  router.push({ name: 'register' })
 }
 </script>
 
@@ -80,25 +97,30 @@ const moveToRegisterPage = () => {
           <img src="@/assets/Bell.png" alt="" />
         </a-badge>
         <ul class="navbar-nav me-5 mb-2 ms-md-auto mb-lg-0">
-          <li class="nav-item">
-                  <a
-                    class="nav-link island_color"
-                    id="island_color"
-                    aria-current="page"
-                    href="#"
-                    data-bs-toggle="modal"
-                    data-bs-target="#loginModal"
-                    >로그인</a
-                  >
+          <li v-if="isAuthenticated" class="nav-item">
+            <a class="nav-link island_color" href="#">로그아웃</a>
           </li>
-          <button class="btn island_button_style" type="button" @click="moveToRegisterPage">회원가입</button>
+          <li v-if="!isAuthenticated" class="nav-item">
+            <a
+              class="nav-link island_color"
+              id="island_color"
+              aria-current="page"
+              href="#"
+              data-bs-toggle="modal"
+              data-bs-target="#loginModal"
+            >
+              로그인
+            </a>
+          </li>
+          <button v-if="!isAuthenticated" class="btn island_button_style" type="button" @click="moveToRegisterPage">회원가입</button>
+          <button v-if="isAuthenticated" class="btn island_button_style" type="button" @click="moveToRegisterPage">마이페이지</button>
         </ul>
       </div>
     </div>
   </nav>
 
-    <!-- 로그인 모달 -->
-    <div
+  <!-- 로그인 모달 -->
+  <div
     class="modal fade"
     id="loginModal"
     tabindex="-1"
@@ -140,7 +162,6 @@ const moveToRegisterPage = () => {
 </template>
 
 <style scoped>
-
 .island_color {
   color: #920101;
 }
@@ -148,7 +169,4 @@ const moveToRegisterPage = () => {
   background-color: #920101;
   color: white;
 }
-
-
-
 </style>
