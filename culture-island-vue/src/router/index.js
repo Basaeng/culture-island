@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+
 import BoardView from "@/views/BoardView.vue";
 import BoardList from "@/components/boards/BoardList.vue";
 import BoardDetail from "@/components/boards/BoardDetail.vue";
 import BoardModify from "@/components/boards/BoardModify.vue";
 import BoardWrite from "@/components/boards/BoardWrite.vue";
 
+import RegisterView from "@/views/RegisterView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,6 +16,11 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: RegisterView
     },
     {
       path: "/",
