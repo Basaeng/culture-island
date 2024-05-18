@@ -96,6 +96,7 @@ CREATE TABLE IF NOT EXISTS `cultureisland`.`article` (
     `content` VARCHAR(5096) NOT NULL,
     `hit` INT NULL DEFAULT 0,
     `register_time` DATETIME NULL,
+    `name` varchar(16) NOT NULL,
     `member_id` INT NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `fk_article_member1_idx` (`member_id` ASC) VISIBLE,

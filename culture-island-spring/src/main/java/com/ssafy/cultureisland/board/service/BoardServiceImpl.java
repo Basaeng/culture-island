@@ -23,23 +23,22 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardListDto listArticle(Map<String, String> map) throws Exception {
         Map<String, Object> param = new HashMap<String, Object>();
-        System.out.println(map);
         param.put("word", map.get("word") == null ? "" : map.get("word"));
         int currentPage = Integer.parseInt(map.get("pgno") == null ? "1" : map.get("pgno"));
-        int sizePerPage = Integer.parseInt(map.get("spp") == null ? "20" : map.get("spp"));
-        int start = currentPage *sizePerPage - sizePerPage;
+        int sizePerPage = Integer.parseInt(map.get("spp") == null ? "10" : map.get("spp"));
+        int start = currentPage * sizePerPage - sizePerPage;
         param.put("start", start);
         param.put("listSize", sizePerPage);
 
         String key = map.get("key");
         param.put("key", key == null ? "" : key);
-        if ("user_id".equals(key)) {
-            param.put("key", "b.member_id");
+        if ("user_name".equals(key)) {
+            param.put("key", "b.name");
         }
-        System.out.println("list");
+
         List<BoardDto> list = boardMapper.listArticle(param);
         if ("user_id".equals(key)) {
-            param.put("key", "member_id");
+            param.put("key", "name");
         }
         int totalArticleCount = boardMapper.getTotalArticleCount(param);
         int totalPageCount = (totalArticleCount - 1) / sizePerPage + 1;
@@ -51,4 +50,12 @@ public class BoardServiceImpl implements BoardService {
 
         return boardListDto;
     }
+
+    @Override
+    public void writeArticle(BoardDto boardDto) throws Exception {
+        System.out.println(boardDto);
+        boardMapper.writeArticle(boardDto);
+    }
+
+
 }

@@ -13,7 +13,7 @@ import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping(value="board")
+@RequestMapping("/board")
 public class BoardController {
 
     private BoardService boardService;
@@ -23,10 +23,20 @@ public class BoardController {
     }
 
     @GetMapping
-    public ResponseEntity<?> articleList(@RequestParam Map<String,String> map) {
+    public ResponseEntity<?> articleList(@RequestParam Map<String, String> map) {
         try {
             BoardListDto boardListDto = boardService.listArticle(map);
             return ResponseEntity.ok().body(boardListDto);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> writeArticle(@RequestBody BoardDto boardDto) {
+        try {
+            boardService.writeArticle(boardDto);
+            return new ResponseEntity<Void>(HttpStatus.CREATED);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
