@@ -29,7 +29,7 @@ const register = async() => {
 
   try {
     const response = await http.post(`/member`, payload);
-    alert('회원가입 성공!')
+    alert('회원가입 성공! ㅋㅅㅋ')
     console.log(response.data);
   } catch (error) {
     console.error('회원가입 실패: ', error);

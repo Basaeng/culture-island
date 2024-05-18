@@ -11,6 +11,10 @@ import RegisterView from "@/views/RegisterView.vue";
 import MyPageView from "@/views/MyPageView.vue";
 import MemberInfo from "@/components/mypage/MemberInfo.vue";
 import MyArticle from "@/components/mypage/MyArticle.vue";
+import CultureSearch from "@/views/CultureSearch.vue";
+import CultureList from "@/components/culture/CultureList.vue"
+import CultureCalendar from "@/components/culture/CultureCalendar.vue"
+import CultureMap from "@/components/culture/CultureMap.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -88,6 +92,29 @@ const router = createRouter({
           path: "myarticle",
           name: "myarticle",
           component: MyArticle
+        }
+      ]
+    },
+    {
+      path: "/search",
+      name: "search",
+      component: CultureSearch,
+      redirect: {name: "culturelist"},
+      children: [
+        {
+          path: "list",
+          name: "culturelist",
+          component: CultureList
+        },
+        {
+          path: "calendar",
+          name: "culturecalendar",
+          component: CultureCalendar
+        },
+        {
+          path: "map",
+          name: "culturemap",
+          component: CultureMap
         }
       ]
     }

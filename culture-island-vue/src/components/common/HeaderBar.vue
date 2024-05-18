@@ -85,13 +85,16 @@ const moveToMyPage = () => {
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav col-md-5 ms-md-auto mb-3 mb-lg-0">
           <li class="nav-item col-md-3">
-            <a class="nav-link active" aria-current="page" href="#">공연 달력</a>
+            <router-link :to="{name: 'culturecalendar'}" class="nav-link active">공연 달력</router-link>
+            <!-- <a class="nav-link active" aria-current="page" href="#">공연 달력</a> -->
           </li>
           <li class="nav-item col-md-3">
-            <a class="nav-link active" href="#">공연 지도</a>
+            <router-link :to="{name: 'culturemap'}" class="nav-link active">공연 지도</router-link>
+            <!-- <a class="nav-link active" href="#">공연 지도</a> -->
           </li>
           <li class="nav-item col-md-3">
-            <a class="nav-link active" href="#">공연 검색</a>
+            <router-link :to="{name: 'search'}" class="nav-link active">공연 검색</router-link>
+            <!-- <a class="nav-link active" href="#">공연 검색</a> -->
           </li>
           <li class="nav-item dropdown">
             <a
