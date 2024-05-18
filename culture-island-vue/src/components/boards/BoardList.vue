@@ -81,7 +81,9 @@ const moveWrite = () => {
                   v-model="param.word"
                   placeholder="검색어..."
                 />
-                <button class="btn btn-dark" type="button" @click="getArticleList">검색</button>
+                <button class="btn island_button_style" type="button" @click="getArticleList">
+                  검색
+                </button>
               </div>
             </form>
           </div>
@@ -102,7 +104,11 @@ const moveWrite = () => {
         ></PageNavigation> -->
       </div>
       <div class="col-1">
-        <button type="button" class="btn btn-outline-primary btn-sm" @click="moveWrite">
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm island_button_style"
+          @click="moveWrite"
+        >
           글쓰기
         </button>
       </div>
@@ -110,4 +116,12 @@ const moveWrite = () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.island_color {
+  color: #920101;
+}
+.island_button_style {
+  background-color: #920101;
+  color: white;
+}
+</style>
