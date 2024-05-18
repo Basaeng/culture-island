@@ -1,6 +1,7 @@
 
 <script setup>
 import { UserOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+import { RouterLink } from 'vue-router';
 </script>
 
 <template>
@@ -14,10 +15,10 @@ import { UserOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons
             <a class="nav-link" href="#">관심공연</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">내 게시글</a>
+            <router-link  class="nav-link" :to="{name: 'myarticle'}">내 게시글</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">내 프로필</a>
+            <router-link class="nav-link" :to="{name: 'memberinfo'}">내 프로필</router-link>
           </li>
         </ul>
       </nav>

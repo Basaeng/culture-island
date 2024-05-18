@@ -10,7 +10,7 @@ import BoardWrite from "@/components/boards/BoardWrite.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import MyPageView from "@/views/MyPageView.vue";
 import MemberInfo from "@/components/mypage/MemberInfo.vue";
-import Profile from "@/components/mypage/Profile.vue";
+import MyArticle from "@/components/mypage/MyArticle.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -85,9 +85,9 @@ const router = createRouter({
           component: MemberInfo
         },
         {
-          path: "profile",
-          name: "profile",
-          component: Profile
+          path: "myarticle",
+          name: "myarticle",
+          component: MyArticle
         }
       ]
     }
