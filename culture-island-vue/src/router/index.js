@@ -16,6 +16,8 @@ import CultureList from "@/components/culture/CultureList.vue"
 import CultureCalendar from "@/components/culture/CultureCalendar.vue"
 import CultureMap from "@/components/culture/CultureMap.vue"
 
+import Test from "@/views/Test.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -117,6 +119,11 @@ const router = createRouter({
           component: CultureMap
         }
       ]
+    }, 
+    {
+      path: '/test',
+      name: 'test',
+      component: Test
     }
   ],
 });

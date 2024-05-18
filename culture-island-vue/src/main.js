@@ -6,12 +6,15 @@ import "@/assets/main.css";
 
 import App from "./App.vue";
 import router from "./router";
+import { useKakao } from "vue3-kakao-maps";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 
-const app = createApp(App);
+const {VITE_MAP_API_KEY} = import.meta.env
+useKakao(`${VITE_MAP_API_KEY}`)
 
+const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 

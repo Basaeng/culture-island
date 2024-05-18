@@ -1,4 +1,6 @@
 <script setup>
+import Side from '@/components/culture/item/CultureSide.vue';
+
 </script>
 
 <template>
