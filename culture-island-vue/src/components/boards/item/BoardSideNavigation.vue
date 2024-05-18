@@ -10,6 +10,7 @@
       <a-menu
         @click="navClick"
         v-model:selectedKeys="state.selectedKeys"
+        class="island_color"
         style="width: 256px"
         mode="inline"
         :open-keys="state.openKeys"
@@ -21,7 +22,7 @@
 </template>
 <script setup>
 import { h, reactive } from "vue";
-import { MailOutlined, AppstoreOutlined, SettingOutlined } from "@ant-design/icons-vue";
+import { PieChartOutlined, CreditCardOutlined } from "@ant-design/icons-vue";
 import { theme } from "ant-design-vue";
 
 const navClick = () => {
@@ -38,7 +39,7 @@ function getItem(label, key, icon, children, type) {
   };
 }
 const items = reactive([
-  getItem("분류 설정", "sub1", () => h(MailOutlined), [
+  getItem("분류 설정", "sub1", () => h(PieChartOutlined), [
     getItem("클래식", "1"),
     getItem("뮤지컬", "2"),
     getItem("전시", "3"),
@@ -46,7 +47,7 @@ const items = reactive([
     getItem("무용", "5"),
     getItem("국악", "6"),
   ]),
-  getItem("유무료 설정", "sub2", () => h(AppstoreOutlined), [
+  getItem("유무료 설정", "sub2", () => h(CreditCardOutlined), [
     getItem("유료", "7"),
     getItem("무료", "8"),
   ]),
