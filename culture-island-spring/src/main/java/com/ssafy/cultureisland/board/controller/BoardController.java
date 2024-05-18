@@ -52,6 +52,16 @@ public class BoardController {
         }
     }
 
+    @DeleteMapping("/{articleNo}")
+    public ResponseEntity<?> deleteArticle(@PathVariable("articleNo") int articleNo) {
+        try {
+            boardService.deleteArticle(articleNo);
+            return new ResponseEntity<Void>(HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
 
     private ResponseEntity<?> exceptionHandling(Exception e) {
         e.printStackTrace();

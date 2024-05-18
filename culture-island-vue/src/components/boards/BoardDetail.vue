@@ -44,7 +44,8 @@ function onDeleteArticle() {
   deleteArticle(
     articleno,
     (response) => {
-      if (response.status == 200) moveList();
+      // if (response.status == 200)
+      moveList();
     },
     (error) => {
       console.log(error);

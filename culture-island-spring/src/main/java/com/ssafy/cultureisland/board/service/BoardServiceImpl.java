@@ -61,5 +61,10 @@ public class BoardServiceImpl implements BoardService {
         return boardMapper.getArticle(articleNo);
     }
 
+    @Override
+    public void deleteArticle(int articleNo) throws Exception {
+        boardMapper.deleteArticle(articleNo);
+    }
+
 
 }
