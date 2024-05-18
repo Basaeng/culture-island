@@ -1,9 +1,9 @@
-// import { Axios } from "@/util/http-commons";
+import { Axios } from "@/util/http-common";
 
-// const local = Axios();
+const local = Axios();
 
 function listArticle(param, success, fail) {
-  // local.get(`/board`, { params: param }).then(success).catch(fail);
+  local.get(`/board`, { params: param }).then(success).catch(fail);
   console.log("list");
 }
 
@@ -14,7 +14,7 @@ function detailArticle(articleno, success, fail) {
 
 function registArticle(article, success, fail) {
   // console.log("boardjs article", article);
-  // local.post(`/board`, JSON.stringify(article)).then(success).catch(fail);
+  local.post(`/board`, JSON.stringify(article)).then(success).catch(fail);
   console.log("regist");
 }
 

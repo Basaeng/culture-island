@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { listArticle } from "@/api/board.js";
 
 import BoardSideNavigation from "./item/BoardSideNavigation.vue";
-import BoardCardItem from "./item/BoardCardItem.vue"
+import BoardCardItem from "./item/BoardCardItem.vue";
 import BoardListItem from "@/components/boards/item/BoardListItem.vue";
 import PageNavigation from "@/components/common/PageNavigation.vue";
 
@@ -87,22 +87,19 @@ const moveWrite = () => {
           </div>
         </div>
         <div class="row">
-          <BoardCardItem v-for="i in 6"/>
-          <!-- <BoardListItem
-            v-for="article in articles"
-            :key="article.articleNo"
-            :article="article"
-            ></BoardListItem> -->
-          </div>
+          <BoardCardItem v-for="article in articles" :key="article.memberId" :article="article">
+          </BoardCardItem>
+        </div>
       </div>
     </div>
     <div class="row bottom">
       <div class="col">
-        <PageNavigation
-        :current-page="currentPage"
-        :total-page="totalPage"
-        @pageChange="onPageChange"
-        ></PageNavigation>
+        <a-pagination v-model:current="currentPage" :total="totalPage * 10" />
+        <!-- <PageNavigation
+          :current-page="currentPage"
+          :total-page="totalPage"
+          @pageChange="onPageChange"
+        ></PageNavigation> -->
       </div>
       <div class="col-1">
         <button type="button" class="btn btn-outline-primary btn-sm" @click="moveWrite">

@@ -11,13 +11,13 @@ const props = defineProps({ type: String });
 const isUseId = ref(false);
 
 const article = ref({
-  articleNo: 0,
+  // articleNo: 0,
   subject: "",
   content: "",
-  userId: "",
-  userName: "",
-  hit: 0,
-  registerTime: "",
+  name: "",
+  memberId: 1, // dummy data
+  // hit: 0,
+  // registerTime: "",
 });
 
 if (props.type === "modify") {
@@ -113,7 +113,7 @@ function moveList() {
       <input
         type="text"
         class="form-control"
-        v-model="article.userId"
+        v-model="article.name"
         :disabled="isUseId"
         placeholder="작성자ID..."
       />
