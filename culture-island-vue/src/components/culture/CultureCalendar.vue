@@ -12,17 +12,17 @@ const onPanelChange = (value, mode) => {
 };
 
 const http = CultureAxios()
-
+const pageno = 1;
+const pagesize = 5;
+// pageno에 따라 
 const onSelectDate = (date) => {
     const dateString = date.format('YYYY-MM-DD');
     console.log(dateString)
     console.log(VITE_CULTURE_API_URL)
-    http.get(`${VITE_CULTURE_API_URL}/1/5/%20/%20/${dateString}`)
+    http.get(`${VITE_CULTURE_API_URL}/${1+((pageno-1)*pagesize)}/${pageno*pagesize}/%20/%20/${dateString}`)
     .then(({data}) => {
         console.log(data)
     })
-    selectedEvents.value = events.value[dateString] || [];
-    console.log(selectedEvents.value)
 };
 
 </script>
