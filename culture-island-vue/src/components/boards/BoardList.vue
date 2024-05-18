@@ -42,6 +42,7 @@ const getArticleList = () => {
   listArticle(
     param.value,
     ({ data }) => {
+      console.log(data);
       articles.value = data.articles;
       currentPage.value = data.currentPage;
       totalPage.value = data.totalPageCount;
@@ -65,7 +66,7 @@ const moveWrite = () => {
 </script>
 
 <template>
-  <div class="container-fluid">
+  <div class="container mt-5">
     <div class="row">
       <div class="align-middle col-lg-3">
         <BoardSideNavigation />
@@ -89,13 +90,13 @@ const moveWrite = () => {
           </div>
         </div>
         <div class="row">
-          <BoardCardItem v-for="article in articles" :key="article.memberId" :article="article">
+          <BoardCardItem v-for="article in articles" :key="article.articleNo" :article="article">
           </BoardCardItem>
         </div>
       </div>
     </div>
-    <div class="row bottom">
-      <div class="col">
+    <div class="row bottom mt-3">
+      <div class="col text-center">
         <a-pagination v-model:current="currentPage" :total="totalPage * 10" />
         <!-- <PageNavigation
           :current-page="currentPage"
@@ -123,5 +124,11 @@ const moveWrite = () => {
 .island_button_style {
   background-color: #920101;
   color: white;
+}
+
+.nav {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 </style>

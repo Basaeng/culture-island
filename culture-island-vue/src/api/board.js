@@ -8,7 +8,7 @@ function listArticle(param, success, fail) {
 }
 
 function detailArticle(articleno, success, fail) {
-  // local.get(`/board/${articleno}`).then(success).catch(fail);
+  local.get(`/board/${articleno}`).then(success).catch(fail);
   console.log("detail");
 }
 

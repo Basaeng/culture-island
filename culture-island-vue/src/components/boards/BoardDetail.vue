@@ -22,6 +22,7 @@ const getArticle = () => {
     articleno,
     ({ data }) => {
       article.value = data;
+      console.log(data);
     },
     (error) => {
       console.log(error);
@@ -53,16 +54,11 @@ function onDeleteArticle() {
 </script>
 
 <template>
-  <div class="container">
+  <div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-lg-10">
-        <h2 class="my-3 py-3 shadow-sm bg-light text-center">
-          <mark class="sky">글보기</mark>
-        </h2>
-      </div>
       <div class="col-lg-10 text-start">
         <div class="row my-2">
-          <h2 class="text-secondary px-5">{{ article.articleNo }}. {{ article.subject }}</h2>
+          <h2 class="text-center px-5">{{ article.subject }}</h2>
         </div>
         <div class="row">
           <div class="col-md-8">
@@ -72,9 +68,9 @@ function onDeleteArticle() {
                 src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg"
               />
               <p>
-                <span class="fw-bold">안효인</span> <br />
+                <span class="fw-bold">{{ article.name }}</span> <br />
                 <span class="text-secondary fw-light">
-                  {{ article.registerTime }}1 조회 : {{ article.hit }}
+                  {{ article.registerTime }} 조회 : {{ article.hit }}
                 </span>
               </p>
             </div>

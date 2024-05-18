@@ -49,4 +49,10 @@
         </selectKey>
     </insert>
 
+    <select id="getArticle" parameterType="int" resultMap="article">
+        select id, member_id, name, subject, content, hit, register_time
+        from article
+        where id = #{articleNo}
+    </select>
+
 </mapper>

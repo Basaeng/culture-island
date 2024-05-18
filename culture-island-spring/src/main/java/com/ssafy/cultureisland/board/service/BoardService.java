@@ -10,5 +10,6 @@ import java.util.Map;
 public interface BoardService {
     BoardListDto listArticle(Map<String,String> map) throws Exception;
     void writeArticle(BoardDto boardDto) throws Exception;
+    BoardDto getArticle(int articleNo)  throws Exception;
 
 }

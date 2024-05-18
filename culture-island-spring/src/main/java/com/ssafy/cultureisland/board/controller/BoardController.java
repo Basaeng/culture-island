@@ -43,10 +43,13 @@ public class BoardController {
     }
 
     @GetMapping("/{articleNo}")
-    public ResponseEntity<BoardDto> getArticle(@PathVariable("articlNo") int articleNo) {
-//        boardService.
-
-        return null;
+    public ResponseEntity<?> getArticle(@PathVariable("articleNo") int articleNo) {
+        try {
+            BoardDto article = boardService.getArticle(articleNo);
+            return new ResponseEntity<BoardDto>(article, HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
     }
 
 

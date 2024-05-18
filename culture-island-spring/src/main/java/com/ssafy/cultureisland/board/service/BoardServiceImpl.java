@@ -53,8 +53,12 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public void writeArticle(BoardDto boardDto) throws Exception {
-        System.out.println(boardDto);
         boardMapper.writeArticle(boardDto);
+    }
+
+    @Override
+    public BoardDto getArticle(int articleNo) throws Exception {
+        return boardMapper.getArticle(articleNo);
     }
 
 
