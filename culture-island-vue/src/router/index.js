@@ -9,6 +9,8 @@ import BoardWrite from "@/components/boards/BoardWrite.vue";
 
 import RegisterView from "@/views/RegisterView.vue";
 import MyPageView from "@/views/MyPageView.vue";
+import MemberInfo from "@/components/mypage/MemberInfo.vue";
+import Profile from "@/components/mypage/Profile.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -75,6 +77,19 @@ const router = createRouter({
       path: "/mypage",
       name: "mypage",
       component: MyPageView,
+      redirect: { name: "memberinfo" },
+      children: [
+        {
+          path: "memberinfo",
+          name: "memberinfo",
+          component: MemberInfo
+        },
+        {
+          path: "profile",
+          name: "profile",
+          component: Profile
+        }
+      ]
     }
   ],
 });

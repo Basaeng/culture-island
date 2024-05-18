@@ -32,6 +32,7 @@ const login = () => {
       router.push(redirect)
     })
     .catch((error) => {
+      alert("아이디나 비밀번호가 다릅니다.")
       console.log('Error logging in:', error)
     })
 }
@@ -131,7 +132,8 @@ const moveToMyPage = () => {
             </a>
           </li>
           <button v-if="!isAuthenticated" class="btn island_button_style" type="button" @click="moveToRegisterPage">회원가입</button>
-          <button v-if="isAuthenticated" class="btn island_button_style" type="button" @click="moveToMyPage">마이페이지</button>
+          <!-- <button v-if="isAuthenticated" class="btn island_button_style" type="button" @click="moveToMyPage">마이페이지</button> -->
+          <button v-if="isAuthenticated" class="btn island_button_style" type="button"><router-link class="island_button_style" :to="{name: 'mypage'}">마이페이지</router-link></button>
         </ul>
       </div>
     </div>
@@ -186,5 +188,7 @@ const moveToMyPage = () => {
 .island_button_style {
   background-color: #920101;
   color: white;
+  text-decoration-color: white;
+  text-decoration: none;
 }
 </style>
