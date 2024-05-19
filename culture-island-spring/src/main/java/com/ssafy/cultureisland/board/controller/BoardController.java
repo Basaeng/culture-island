@@ -45,6 +45,7 @@ public class BoardController {
     @GetMapping("/{articleNo}")
     public ResponseEntity<?> getArticle(@PathVariable("articleNo") int articleNo) {
         try {
+            boardService.updateHit(articleNo);
             BoardDto article = boardService.getArticle(articleNo);
             return new ResponseEntity<BoardDto>(article, HttpStatus.OK);
         } catch (Exception e) {

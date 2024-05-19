@@ -55,6 +55,12 @@
         where id = #{articleNo}
     </select>
 
+    <update id="updateHit" parameterType="int">
+        update article
+        set hit = hit + 1
+        where id = #{articleNo}
+    </update>
+
     <delete id="deleteArticle" parameterType="int">
         delete from article
         where id = #{articleNo}

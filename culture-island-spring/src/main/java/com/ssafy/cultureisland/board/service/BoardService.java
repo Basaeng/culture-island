@@ -12,5 +12,6 @@ public interface BoardService {
     void writeArticle(BoardDto boardDto) throws Exception;
     BoardDto getArticle(int articleNo)  throws Exception;
     void deleteArticle(int articleNo) throws Exception;
+    void updateHit(int articleNo) throws Exception;
 
 }
