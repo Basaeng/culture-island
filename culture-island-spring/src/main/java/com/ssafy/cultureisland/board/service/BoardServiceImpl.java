@@ -34,7 +34,8 @@ public class BoardServiceImpl implements BoardService {
         param.put("listSize", sizePerPage);
 
         String key = map.get("key");
-        param.put("key", key == null ? "" : key);
+//        param.put("key", key == null ? "subject" : key);
+        param.put("key","subject");
         if ("user_name".equals(key)) {
             param.put("key", "b.name");
         }
@@ -79,5 +80,9 @@ public class BoardServiceImpl implements BoardService {
         commentMapper.writeComment(commentDto);
     }
 
+    @Override
+    public List<CommentDto> listComment(int articleNo) throws Exception {
+        return commentMapper.listComment(articleNo);
+    }
 
 }
