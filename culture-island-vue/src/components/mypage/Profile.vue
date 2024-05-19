@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { defineProps } from 'vue';
 
 const props = defineProps({
@@ -8,6 +8,20 @@ const props = defineProps({
     required: true
   }
 })
+
+onMounted(() => {
+  getRankName(member.memberRank)
+})
+
+const rankName = ref('')
+
+const getRankName = (memberRank) => {
+  console.log(memberRank)
+  if (memberRank === 1) {
+    rankName = 'newbie'
+  } 
+  console.log(rankName)
+} 
 
 </script>
 
@@ -27,7 +41,7 @@ const props = defineProps({
       </div>
       <div class="userdata mt-5">
         <div class="mt-5"></div>
-        <div class="mt-4">회원 등급: {{ member.memberRank }}</div>
+        <div class="mt-4">회원 등급: {{ rankName }}</div>
         <div class="mt-4">관심 분류:</div>
         <div class="mt-4">전화: {{ member.number }}</div>
       </div>
