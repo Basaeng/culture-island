@@ -102,10 +102,8 @@ const moveWrite = () => {
               </template>
             </a-alert>
           </div>
-          <div v-else>
-            <BoardCardItem v-for="article in articles" :key="article.articleNo" :article="article">
-            </BoardCardItem>
-          </div>
+          <BoardCardItem v-for="article in articles" :key="article.articleNo" :article="article">
+          </BoardCardItem>
         </div>
       </div>
     </div>
