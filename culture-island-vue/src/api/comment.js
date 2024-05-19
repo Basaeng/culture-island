@@ -2,8 +2,8 @@ import { Axios } from "@/util/http-common";
 
 const http = Axios();
 
-function listComment(param, success, fail) {
-  http.get(`/board/comment`, { params: param }).then(success).catch(fail);
+function listComment(articleno, success, fail) {
+  http.get(`/board/comment/${articleno}`).then(success).catch(fail);
   console.log("comment list");
 }
 

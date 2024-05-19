@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+defineProps({ comment: Object });
+</script>
 
 <template>
   <a-comment>
@@ -6,14 +8,29 @@
       <span key="comment-nested-reply-to">Reply to</span>
     </template>
     <template #author>
-      <a>ssafy</a>
+      <a>{{ comment.name }}</a>
     </template>
     <template #avatar>
-      <a-avatar src="https://joeschmoe.io/api/v1/random" alt="ssafy" />
+      <a-avatar alt="ssafy">
+        <template #icon>
+          <UserOutlined />
+        </template>
+      </a-avatar>
     </template>
+    <!-- <template #avatar>
+      <a-avatar>
+        <template #icon>
+          <SmileOutlined />
+        </template>
+      </a-avatar>
+    </template> -->
     <template #content>
-      <p>우와 최고!</p>
+      <p>{{ comment.comment }}</p>
     </template>
+    <template #datetime>
+      <span>{{ comment.registerTime }}</span>
+    </template>
+    <!-- 대댓글 시 -->
     <!-- <a-comment>
       <template #actions>
         <span>Reply to</span>

@@ -10,13 +10,6 @@ import PageNavigation from "@/components/common/PageNavigation.vue";
 
 const router = useRouter();
 
-const selectOption = ref([
-  { text: "검색조건", value: "" },
-  { text: "글번호", value: "article_no" },
-  { text: "제목", value: "subject" },
-  { text: "작성자아이디", value: "user_id" },
-]);
-
 const articles = ref([]);
 const currentPage = ref(1);
 const totalPage = ref(0);
@@ -26,16 +19,12 @@ const param = ref({
   spp: VITE_LIST_SIZE,
   key: "",
   word: "",
+  type: "",
 });
 
 onMounted(() => {
   getArticleList();
 });
-
-const changeKey = (val) => {
-  console.log("BoarList에서 선택한 조건 : " + val);
-  param.value.key = val;
-};
 
 const getArticleList = () => {
   console.log("서버에서 글목록 얻어오자!!!", param.value);
@@ -51,6 +40,12 @@ const getArticleList = () => {
       console.log(error);
     }
   );
+};
+
+const selectedType = (type) => {
+  param.value.type = String(type);
+  // console.log(param.value);
+  getArticleList();
 };
 
 const onPageChange = (val) => {
@@ -69,7 +64,7 @@ const moveWrite = () => {
   <div class="container mt-5">
     <div class="row">
       <div class="align-middle col-lg-3">
-        <BoardSideNavigation />
+        <BoardSideNavigation @selected="selectedType" />
       </div>
       <div class="col">
         <div class="row align-self-center mb-2">

@@ -20,11 +20,11 @@ const submitting = ref(false);
 const value = ref("");
 
 const comment = ref({});
-
 const article = ref({});
 
 onMounted(() => {
   getArticle();
+  getComments();
 });
 
 const getArticle = () => {
@@ -44,6 +44,16 @@ const getArticle = () => {
 
 const getComments = () => {
   console.log(articleno + "번 글의 댓글을 얻자");
+  listComment(
+    articleno,
+    ({ data }) => {
+      comments.value = data;
+      console.log(comments.value);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
 };
 
 const commentSubmit = () => {
@@ -68,6 +78,7 @@ const commentSubmit = () => {
       comment.value,
       (response) => {
         console.log("댓글 작성 완료");
+        getComments();
       },
       (error) => {
         console.log(error);
@@ -121,7 +132,7 @@ function onDeleteArticle() {
               </p>
             </div>
           </div>
-          <div class="col-md-4 align-self-center text-end">댓글 : 1</div>
+          <div class="col-md-4 align-self-center text-end">댓글 : {{ comments.length }}</div>
           <div class="divider mb-3"></div>
           <div class="text-center">
             {{ article.content }}
@@ -141,7 +152,7 @@ function onDeleteArticle() {
         </div>
         <div class="row">
           <div class="col-lg-8 col-md-6 col-sm-8">
-            <CommentDetailItem />
+            <CommentDetailItem v-for="item in comments" :key="item.commentNo" :comment="item" />
           </div>
         </div>
         <div class="row">

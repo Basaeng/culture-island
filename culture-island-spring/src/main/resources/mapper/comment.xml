@@ -23,4 +23,10 @@
         </selectKey>
     </insert>
 
+    <select id="listComment" parameterType="int" resultMap="comment">
+        select id, parent_id, depth, comment, article_id, member_id, name, register_time
+        from comments
+        where #{articleNo} = article_id
+    </select>
+
 </mapper>
