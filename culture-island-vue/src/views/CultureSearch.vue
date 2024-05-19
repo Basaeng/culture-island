@@ -1,6 +1,5 @@
 <script setup>
-import Side from '@/components/mypage/Side.vue';
-import { RouterView } from 'vue-router';
+import Side from '@/components/culture/item/CultureSide.vue';
 
 </script>
 
@@ -14,6 +13,6 @@ import { RouterView } from 'vue-router';
   </div>
 </template>
 
-<style>
+<style scoped>
 
 </style>

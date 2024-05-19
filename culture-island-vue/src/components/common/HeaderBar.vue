@@ -32,6 +32,7 @@ const login = () => {
       router.push(redirect)
     })
     .catch((error) => {
+      alert("아이디나 비밀번호가 다릅니다.")
       console.log('Error logging in:', error)
     })
 }
@@ -84,13 +85,16 @@ const moveToMyPage = () => {
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav col-md-5 ms-md-auto mb-3 mb-lg-0">
           <li class="nav-item col-md-3">
-            <a class="nav-link active" aria-current="page" href="#">공연 달력</a>
+            <router-link :to="{name: 'culturecalendar'}" class="nav-link active">공연 달력</router-link>
+            <!-- <a class="nav-link active" aria-current="page" href="#">공연 달력</a> -->
           </li>
           <li class="nav-item col-md-3">
-            <a class="nav-link active" href="#">공연 지도</a>
+            <router-link :to="{name: 'culturemap'}" class="nav-link active">공연 지도</router-link>
+            <!-- <a class="nav-link active" href="#">공연 지도</a> -->
           </li>
           <li class="nav-item col-md-3">
-            <a class="nav-link active" href="#">공연 검색</a>
+            <router-link :to="{name: 'culturelist', params: { pageno: 1 } }" class="nav-link active">공연 검색</router-link>
+            <!-- <a class="nav-link active" href="#">공연 검색</a> -->
           </li>
           <li class="nav-item dropdown">
             <a
@@ -131,7 +135,8 @@ const moveToMyPage = () => {
             </a>
           </li>
           <button v-if="!isAuthenticated" class="btn island_button_style" type="button" @click="moveToRegisterPage">회원가입</button>
-          <button v-if="isAuthenticated" class="btn island_button_style" type="button" @click="moveToMyPage">마이페이지</button>
+          <!-- <button v-if="isAuthenticated" class="btn island_button_style" type="button" @click="moveToMyPage">마이페이지</button> -->
+          <button v-if="isAuthenticated" class="btn island_button_style" type="button"><router-link class="island_button_style" :to="{name: 'mypage'}">마이페이지</router-link></button>
         </ul>
       </div>
     </div>
@@ -186,5 +191,7 @@ const moveToMyPage = () => {
 .island_button_style {
   background-color: #920101;
   color: white;
+  text-decoration-color: white;
+  text-decoration: none;
 }
 </style>

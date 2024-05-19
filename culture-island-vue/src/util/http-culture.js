@@ -1,10 +1,10 @@
 import axios from 'axios'
 
-const { VITE_API_URL } = import.meta.env
+const { VITE_CULTURE_API_URL } = import.meta.env
 
-function Axios() {
+function CultureAxios() {
   const instance = axios.create({
-    baseURL: VITE_API_URL,
+    baseURL: VITE_CULTURE_API_URL,
     headers: {
       'Content-Type': 'application/json;charset=utf-8'
     }
@@ -24,4 +24,4 @@ function Axios() {
   return instance;
 }
 
-export { Axios }
+export { CultureAxios }
