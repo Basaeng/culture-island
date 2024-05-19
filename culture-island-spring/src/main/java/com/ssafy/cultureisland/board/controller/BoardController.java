@@ -2,6 +2,7 @@ package com.ssafy.cultureisland.board.controller;
 
 import com.ssafy.cultureisland.board.model.BoardDto;
 import com.ssafy.cultureisland.board.model.BoardListDto;
+import com.ssafy.cultureisland.board.model.CommentDto;
 import com.ssafy.cultureisland.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,16 @@ public class BoardController {
         }
     }
 
+    @PostMapping("/comment")
+    public ResponseEntity<?> writeComment(@RequestBody CommentDto commentDto) {
+        try {
+            System.out.println(commentDto);
+            boardService.writeComment(commentDto);
+            return new ResponseEntity<Void>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
 
     private ResponseEntity<?> exceptionHandling(Exception e) {
         e.printStackTrace();

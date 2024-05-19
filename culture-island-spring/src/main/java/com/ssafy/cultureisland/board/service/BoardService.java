@@ -2,6 +2,7 @@ package com.ssafy.cultureisland.board.service;
 
 import com.ssafy.cultureisland.board.model.BoardDto;
 import com.ssafy.cultureisland.board.model.BoardListDto;
+import com.ssafy.cultureisland.board.model.CommentDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,5 +14,6 @@ public interface BoardService {
     BoardDto getArticle(int articleNo)  throws Exception;
     void deleteArticle(int articleNo) throws Exception;
     void updateHit(int articleNo) throws Exception;
+    void writeComment(CommentDto commentDto) throws Exception;
 
 }

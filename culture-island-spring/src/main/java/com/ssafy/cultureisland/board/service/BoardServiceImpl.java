@@ -3,6 +3,8 @@ package com.ssafy.cultureisland.board.service;
 import com.ssafy.cultureisland.board.model.BoardDto;
 import com.ssafy.cultureisland.board.model.BoardListDto;
 import com.ssafy.cultureisland.board.model.BoardMapper;
+import com.ssafy.cultureisland.board.model.CommentDto;
+import com.ssafy.cultureisland.board.model.CommentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +16,11 @@ import java.util.Map;
 public class BoardServiceImpl implements BoardService {
 
     private BoardMapper boardMapper;
-
+    private CommentMapper commentMapper;
     @Autowired
-    public BoardServiceImpl(BoardMapper boardMapper) {
+    public BoardServiceImpl(BoardMapper boardMapper, CommentMapper commentMapper) {
         this.boardMapper = boardMapper;
+        this.commentMapper = commentMapper;
     }
 
     @Override
@@ -69,6 +72,11 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void updateHit(int articleNo) throws Exception {
         boardMapper.updateHit(articleNo);
+    }
+
+    @Override
+    public void writeComment(CommentDto commentDto) throws Exception {
+        commentMapper.writeComment(commentDto);
     }
 
 

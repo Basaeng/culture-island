@@ -1,13 +1,25 @@
 <script setup>
+import CommentDetailItem from "@/components/boards/comments/CommentDetailItem.vue";
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { detailArticle, deleteArticle } from "@/api/board";
+import { listComment, registComment } from "@/api/comment";
+import { UserOutlined } from "@ant-design/icons-vue";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 const route = useRoute();
 const router = useRouter();
 
 // const articleno = ref(route.params.articleno);
 const { articleno } = route.params;
+
+dayjs.extend(relativeTime);
+const comments = ref([]);
+const submitting = ref(false);
+const value = ref("");
+
+const comment = ref({});
 
 const article = ref({});
 
@@ -22,12 +34,46 @@ const getArticle = () => {
     articleno,
     ({ data }) => {
       article.value = data;
-      console.log(data);
+      console.log(article.value);
     },
     (error) => {
       console.log(error);
     }
   );
+};
+
+const getComments = () => {
+  console.log(articleno + "번 글의 댓글을 얻자");
+};
+
+const commentSubmit = () => {
+  if (!value.value) {
+    return;
+  }
+  submitting.value = true;
+
+  setTimeout(() => {
+    submitting.value = false;
+
+    comment.value = {
+      parentNo: "",
+      depth: "",
+      comment: value.value,
+      articleNo: article.value.articleNo,
+      name: "ssafy", // 댓글 작성자 이름
+      memberNo: 1, // 댓글 작성자 고유 번호
+    };
+
+    registComment(
+      comment.value,
+      (response) => {
+        console.log("댓글 작성 완료");
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }, 1000);
 };
 
 function moveList() {
@@ -44,7 +90,6 @@ function onDeleteArticle() {
   deleteArticle(
     articleno,
     (response) => {
-      // if (response.status == 200)
       moveList();
     },
     (error) => {
@@ -57,7 +102,7 @@ function onDeleteArticle() {
 <template>
   <div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-lg-10 text-start">
+      <div class="col-lg-8 col-md-6 col-sm-8">
         <div class="row my-2">
           <h2 class="text-center px-5">{{ article.subject }}</h2>
         </div>
@@ -76,9 +121,9 @@ function onDeleteArticle() {
               </p>
             </div>
           </div>
-          <div class="col-md-4 align-self-center text-end">댓글 : 17</div>
+          <div class="col-md-4 align-self-center text-end">댓글 : 1</div>
           <div class="divider mb-3"></div>
-          <div class="text-secondary">
+          <div class="text-center">
             {{ article.content }}
           </div>
           <div class="divider mt-3 mb-3"></div>
@@ -92,6 +137,39 @@ function onDeleteArticle() {
             <button type="button" class="btn btn-outline-danger mb-3 ms-1" @click="onDeleteArticle">
               글삭제
             </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-8 col-md-6 col-sm-8">
+            <CommentDetailItem />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-8 col-md-6 col-sm-8">
+            <a-comment>
+              <template #avatar>
+                <a-avatar alt="ssafy">
+                  <template #icon>
+                    <UserOutlined />
+                  </template>
+                </a-avatar>
+              </template>
+              <template #content>
+                <a-form-item>
+                  <a-textarea v-model:value="value" :rows="4" />
+                </a-form-item>
+                <a-form-item>
+                  <a-button
+                    html-type="submit"
+                    :loading="submitting"
+                    type="primary"
+                    @click="commentSubmit"
+                  >
+                    댓글 작성
+                  </a-button>
+                </a-form-item>
+              </template>
+            </a-comment>
           </div>
         </div>
       </div>
