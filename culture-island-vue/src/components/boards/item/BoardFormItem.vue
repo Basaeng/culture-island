@@ -17,6 +17,7 @@ const article = ref({
   name: "",
   memberId: 1, // dummy data
   type: "",
+  pay: "",
 });
 
 if (props.type === "modify") {
@@ -85,7 +86,7 @@ function writeArticle() {
   );
 }
 
-const selectOptions = ref([
+const selectTypeOptions = ref([
   {
     value: "클래식",
     label: "클래식",
@@ -112,11 +113,26 @@ const selectOptions = ref([
   },
 ]);
 
-const selectKey = ref();
+const selectPayOptions = ref([
+  {
+    value: 0,
+    label: "무료",
+  },
+  {
+    value: 1,
+    label: "유료",
+  },
+]);
 
-const handleChange = (value) => {
-  article.value.type = value;
-  console.log(article.value);
+const selectType = ref();
+const selectPay = ref();
+
+const typeChange = (type) => {
+  article.value.type = type;
+};
+
+const payChange = (pay) => {
+  article.value.pay = pay;
 };
 
 function updateArticle() {
@@ -160,12 +176,23 @@ function moveList() {
       <div class="col-sm-3">
         <label for="subject" class="form-label">구분 : </label>
         <a-select
-          v-model:value="selectKey"
+          v-model:value="selectType"
           show-search
           placeholder="구분..."
           style="width: 100%"
-          :options="selectOptions"
-          @change="handleChange"
+          :options="selectTypeOptions"
+          @change="typeChange"
+        ></a-select>
+      </div>
+      <div class="col-sm-3">
+        <label for="subject" class="form-label">가격 : </label>
+        <a-select
+          v-model:value="selectPay"
+          show-search
+          placeholder="유무료 여부..."
+          style="width: 100%"
+          :options="selectPayOptions"
+          @change="payChange"
         ></a-select>
       </div>
     </div>

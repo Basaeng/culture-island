@@ -48,7 +48,6 @@ public class BoardServiceImpl implements BoardService {
 //            param.put("key", "b.name");
 //        }
 
-        param.put("type", map.get("type"));
 
         List<BoardDto> list = boardMapper.listArticle(param);
         if ("user_id".equals(key)) {
