@@ -27,13 +27,13 @@
         <if test="type != null and type != ''">
             and type like concat('%', #{type}, '%')
         </if>
-        <if test="pay != null and pay != ''">
+        <if test="pay != null">
             and pay = #{pay}
         </if>
     </sql>
 
     <select id="listArticle" parameterType="map" resultMap="article">
-        select b.id, b.member_id, b.name, b.subject, b.content, b.hit, b.register_time
+        select b.id, b.member_id, b.name, b.subject, b.content, b.hit, b.type, b.pay, b.register_time
         from article b, member m
         where b.name = m.name
         <include refid="search"/>

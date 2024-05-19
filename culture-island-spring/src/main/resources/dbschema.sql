@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `cultureisland`.`article` (
     `hit` INT NULL DEFAULT 0,
     `register_time` DATETIME NULL,
     `type` varchar(32) NULL,
-    `pay` INT NULL,
+    `pay` INT NULL DEFAULT 0,
     `name` varchar(16) NOT NULL,
     `member_id` INT NOT NULL,
     PRIMARY KEY (`id`),
