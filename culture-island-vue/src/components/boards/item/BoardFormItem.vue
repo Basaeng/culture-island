@@ -59,33 +59,6 @@ watch(
   { immediate: true }
 );
 
-function onSubmit() {
-  // event.preventDefault();
-
-  if (subjectErrMsg.value) {
-    alert(subjectErrMsg.value);
-  } else if (contentErrMsg.value) {
-    alert(contentErrMsg.value);
-  } else {
-    props.type === "regist" ? writeArticle() : updateArticle();
-  }
-}
-
-function writeArticle() {
-  console.log("글등록하자!!", article.value);
-  article.value.name = "ssafy"; // 더미
-  registArticle(
-    article.value,
-    (response) => {
-      let msg = "글등록 처리시 문제 발생했습니다.";
-      if (response.status == 201) msg = "글등록이 완료되었습니다.";
-      alert(msg);
-      moveList();
-    },
-    (error) => console.log(error)
-  );
-}
-
 const selectTypeOptions = ref([
   {
     value: "클래식",
@@ -135,19 +108,65 @@ const payChange = (pay) => {
   article.value.pay = pay;
 };
 
+const open = ref(false);
+const confirmLoading = ref(false);
+const httpRequest = ref(true);
+
+const handleOk = () => {
+  confirmLoading.value = true;
+  setTimeout(() => {
+    open.value = false;
+    confirmLoading.value = false;
+    moveList();
+  }, 1500);
+};
+
+function onSubmit() {
+  // event.preventDefault();
+
+  if (subjectErrMsg.value) {
+    alert(subjectErrMsg.value);
+  } else if (contentErrMsg.value) {
+    alert(contentErrMsg.value);
+  } else {
+    props.type === "regist" ? writeArticle() : updateArticle();
+  }
+}
+
+function writeArticle() {
+  console.log("글등록하자!!", article.value);
+  article.value.name = "ssafy"; // 더미
+  open.value = true;
+  registArticle(
+    article.value,
+    (response) => {
+      if (response.status == 201) msg = "글등록이 완료되었습니다.";
+      // alert(msg);
+    },
+    (error) => {
+      httpRequest.value = false;
+      console.log(error);
+    }
+  );
+}
+
 function updateArticle() {
   console.log(article.value.articleNo + "번글 수정하자!!", article.value);
+  open.value = true;
   modifyArticle(
     article.value,
     (response) => {
       let msg = "글수정 처리시 문제 발생했습니다.";
       if (response.status == 200) msg = "글정보 수정이 완료되었습니다.";
-      alert(msg);
+      // alert(msg);
       moveList();
       // router.push({ name: "article-view" });
       // router.push(`/board/view/${article.value.articleNo}`);
     },
-    (error) => console.log(error)
+    (error) => {
+      httpRequest.value = false;
+      console.log(error);
+    }
   );
 }
 
@@ -214,6 +233,26 @@ function moveList() {
       </button>
     </div>
   </form>
+  <div>
+    <a-modal v-model:open="open" title="" :confirm-loading="confirmLoading" @ok="handleOk">
+      <div v-if="httpRequest === true">
+        <a-result
+          status="success"
+          title="작성 완료"
+          sub-title="글을 작성하였어요, 목록으로 돌아갈까요?"
+        >
+        </a-result>
+      </div>
+      <div v-else>
+        <a-result
+          status="error"
+          title="작성 실패"
+          sub-title="글을 작성하는데 실패했어요, 목록으로 돌아갈까요?"
+        >
+        </a-result>
+      </div>
+    </a-modal>
+  </div>
 </template>
 
 <style scoped>

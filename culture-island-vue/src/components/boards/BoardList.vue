@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { listArticle } from "@/api/board.js";
+import { Empty } from "ant-design-vue";
 
 import BoardSideNavigation from "./item/BoardSideNavigation.vue";
 import BoardCardItem from "./item/BoardCardItem.vue";
@@ -21,6 +22,8 @@ const param = ref({
   word: "",
   type: "",
 });
+
+const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
 
 onMounted(() => {
   getArticleList();
@@ -85,8 +88,24 @@ const moveWrite = () => {
           </div>
         </div>
         <div class="row">
-          <BoardCardItem v-for="article in articles" :key="article.articleNo" :article="article">
-          </BoardCardItem>
+          <div v-if="articles == ''" class="col-lg-8 mt-5">
+            <a-empty :image="simpleImage" />
+            <a-alert
+              message="글이 없어요"
+              description="새로운 글을 만들어 주시겠어요?"
+              type="error"
+              show-icon
+            >
+              <template #icon><smile-outlined /></template>
+              <template #action>
+                <a-button size="small" danger @click="moveWrite">글쓰러 가기</a-button>
+              </template>
+            </a-alert>
+          </div>
+          <div v-else>
+            <BoardCardItem v-for="article in articles" :key="article.articleNo" :article="article">
+            </BoardCardItem>
+          </div>
         </div>
       </div>
     </div>
