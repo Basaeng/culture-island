@@ -1,20 +1,20 @@
-// import { Axios } from "@/util/http-commons";
+import { Axios } from "@/util/http-common";
 
-// const local = Axios();
+const http = Axios();
 
 function listArticle(param, success, fail) {
-  // local.get(`/board`, { params: param }).then(success).catch(fail);
+  http.get(`/board`, { params: param }).then(success).catch(fail);
   console.log("list");
 }
 
 function detailArticle(articleno, success, fail) {
-  // local.get(`/board/${articleno}`).then(success).catch(fail);
+  http.get(`/board/${articleno}`).then(success).catch(fail);
   console.log("detail");
 }
 
 function registArticle(article, success, fail) {
   // console.log("boardjs article", article);
-  // local.post(`/board`, JSON.stringify(article)).then(success).catch(fail);
+  http.post(`/board`, JSON.stringify(article)).then(success).catch(fail);
   console.log("regist");
 }
 
@@ -29,7 +29,7 @@ function modifyArticle(article, success, fail) {
 }
 
 function deleteArticle(articleno, success, fail) {
-  // local.delete(`/board/${articleno}`).then(success).catch(fail);
+  http.delete(`/board/${articleno}`).then(success).catch(fail);
   console.log("delete");
 }
 

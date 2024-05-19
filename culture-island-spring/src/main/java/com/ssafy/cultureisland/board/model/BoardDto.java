@@ -11,7 +11,8 @@ import java.util.List;
 @ToString
 public class BoardDto {
     private int articleNo;
-    private int memberId;
+    private String memberId;
+    private String name;
     private String subject;
     private String content;
     private int hit;

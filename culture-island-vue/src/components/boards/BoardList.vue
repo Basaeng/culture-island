@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { listArticle } from "@/api/board.js";
 
 import BoardSideNavigation from "./item/BoardSideNavigation.vue";
-import BoardCardItem from "./item/BoardCardItem.vue"
+import BoardCardItem from "./item/BoardCardItem.vue";
 import BoardListItem from "@/components/boards/item/BoardListItem.vue";
 import PageNavigation from "@/components/common/PageNavigation.vue";
 
@@ -20,10 +20,10 @@ const selectOption = ref([
 const articles = ref([]);
 const currentPage = ref(1);
 const totalPage = ref(0);
-const { VITE_ARTICLE_LIST_SIZE } = import.meta.env;
+const { VITE_LIST_SIZE } = import.meta.env;
 const param = ref({
   pgno: currentPage.value,
-  spp: VITE_ARTICLE_LIST_SIZE,
+  spp: VITE_LIST_SIZE,
   key: "",
   word: "",
 });
@@ -42,6 +42,7 @@ const getArticleList = () => {
   listArticle(
     param.value,
     ({ data }) => {
+      console.log(data);
       articles.value = data.articles;
       currentPage.value = data.currentPage;
       totalPage.value = data.totalPageCount;
@@ -65,7 +66,7 @@ const moveWrite = () => {
 </script>
 
 <template>
-  <div class="container-fluid">
+  <div class="container mt-5">
     <div class="row">
       <div class="align-middle col-lg-3">
         <BoardSideNavigation />
@@ -81,31 +82,38 @@ const moveWrite = () => {
                   v-model="param.word"
                   placeholder="검색어..."
                 />
-                <button class="btn btn-dark" type="button" @click="getArticleList">검색</button>
+                <button class="btn island_button_style" type="button" @click="getArticleList">
+                  검색
+                </button>
               </div>
             </form>
           </div>
         </div>
         <div class="row">
-          <BoardCardItem v-for="i in 6"/>
-          <!-- <BoardListItem
-            v-for="article in articles"
-            :key="article.articleNo"
-            :article="article"
-            ></BoardListItem> -->
-          </div>
+          <BoardCardItem v-for="article in articles" :key="article.articleNo" :article="article">
+          </BoardCardItem>
+        </div>
       </div>
     </div>
-    <div class="row bottom">
-      <div class="col">
-        <PageNavigation
-        :current-page="currentPage"
-        :total-page="totalPage"
-        @pageChange="onPageChange"
-        ></PageNavigation>
+    <div class="row bottom mt-3">
+      <div class="col text-center">
+        <a-pagination
+          v-model:current="currentPage"
+          :total="totalPage * 10"
+          @change="onPageChange"
+        />
+        <!-- <PageNavigation
+          :current-page="currentPage"
+          :total-page="totalPage"
+          @pageChange="onPageChange"
+        ></PageNavigation> -->
       </div>
       <div class="col-1">
-        <button type="button" class="btn btn-outline-primary btn-sm" @click="moveWrite">
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm island_button_style"
+          @click="moveWrite"
+        >
           글쓰기
         </button>
       </div>
@@ -113,4 +121,18 @@ const moveWrite = () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.island_color {
+  color: #920101;
+}
+.island_button_style {
+  background-color: #920101;
+  color: white;
+}
+
+.nav {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+</style>

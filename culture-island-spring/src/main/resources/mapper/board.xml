@@ -6,6 +6,7 @@
     <resultMap type="boardDto" id="article">
         <result column="id" property="articleNo"/>
         <result column="member_id" property="memberId"/>
+        <result column="name" property="name"/>
         <result column="subject" property="subject"/>
         <result column="content" property="content"/>
         <result column="hit" property="hit"/>
@@ -24,12 +25,12 @@
     </sql>
 
     <select id="listArticle" parameterType="map" resultMap="article">
-        select b.id, b.member_id, b.subject, b.content, b.hit, b.register_time
+        select b.id, b.member_id, b.name, b.subject, b.content, b.hit, b.register_time
         from article b, member m
-        where b.member_id = m.id
+        where b.name = m.name
         <include refid="search"/>
         order by b.id desc
-        limit #{start}, #{listsize}
+        limit #{start}, #{listSize}
     </select>
 
     <select id="getTotalArticleCount" parameterType="map" resultType="int">
@@ -39,5 +40,30 @@
             <include refid="search"/>
         </where>
     </select>
+
+    <insert id="writeArticle" parameterType="boardDto">
+        insert into article (member_id, name, subject, content, hit, register_time)
+        values (#{memberId}, #{name}, #{subject}, #{content}, 0, now())
+        <selectKey resultType="int" keyProperty="articleNo" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <select id="getArticle" parameterType="int" resultMap="article">
+        select id, member_id, name, subject, content, hit, register_time
+        from article
+        where id = #{articleNo}
+    </select>
+
+    <update id="updateHit" parameterType="int">
+        update article
+        set hit = hit + 1
+        where id = #{articleNo}
+    </update>
+
+    <delete id="deleteArticle" parameterType="int">
+        delete from article
+        where id = #{articleNo}
+    </delete>
 
 </mapper>

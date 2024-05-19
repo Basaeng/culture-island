@@ -2,6 +2,7 @@ package com.ssafy.cultureisland.board.controller;
 
 import com.ssafy.cultureisland.board.model.BoardDto;
 import com.ssafy.cultureisland.board.model.BoardListDto;
+import com.ssafy.cultureisland.board.model.CommentDto;
 import com.ssafy.cultureisland.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping(value="board")
+@RequestMapping("/board")
 public class BoardController {
 
     private BoardService boardService;
@@ -23,7 +24,7 @@ public class BoardController {
     }
 
     @GetMapping
-    public ResponseEntity<?> articleList(@RequestParam Map<String,String> map) {
+    public ResponseEntity<?> articleList(@RequestParam Map<String, String> map) {
         try {
             BoardListDto boardListDto = boardService.listArticle(map);
             return ResponseEntity.ok().body(boardListDto);
@@ -32,13 +33,47 @@ public class BoardController {
         }
     }
 
-    @GetMapping("/{articleNo}")
-    public ResponseEntity<BoardDto> getArticle(@PathVariable("articlNo") int articleNo) {
-//        boardService.
-
-        return null;
+    @PostMapping
+    public ResponseEntity<?> writeArticle(@RequestBody BoardDto boardDto) {
+        try {
+            boardService.writeArticle(boardDto);
+            return new ResponseEntity<Void>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
     }
 
+    @GetMapping("/{articleNo}")
+    public ResponseEntity<?> getArticle(@PathVariable("articleNo") int articleNo) {
+        try {
+            boardService.updateHit(articleNo);
+            BoardDto article = boardService.getArticle(articleNo);
+            return new ResponseEntity<BoardDto>(article, HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @DeleteMapping("/{articleNo}")
+    public ResponseEntity<?> deleteArticle(@PathVariable("articleNo") int articleNo) {
+        try {
+            boardService.deleteArticle(articleNo);
+            return new ResponseEntity<Void>(HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @PostMapping("/comment")
+    public ResponseEntity<?> writeComment(@RequestBody CommentDto commentDto) {
+        try {
+            System.out.println(commentDto);
+            boardService.writeComment(commentDto);
+            return new ResponseEntity<Void>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
 
     private ResponseEntity<?> exceptionHandling(Exception e) {
         e.printStackTrace();
