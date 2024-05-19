@@ -17,5 +17,7 @@ public class BoardDto {
     private String content;
     private int hit;
     private String registerTime;
+    private String type;
+    private int pay;
 //    private List<FileInfoDto> fileInfos;
 }

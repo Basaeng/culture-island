@@ -17,6 +17,7 @@ public class BoardServiceImpl implements BoardService {
 
     private BoardMapper boardMapper;
     private CommentMapper commentMapper;
+
     @Autowired
     public BoardServiceImpl(BoardMapper boardMapper, CommentMapper commentMapper) {
         this.boardMapper = boardMapper;
@@ -33,12 +34,21 @@ public class BoardServiceImpl implements BoardService {
         param.put("start", start);
         param.put("listSize", sizePerPage);
 
+        String type = map.get("type");
+        if (type.equals("0") || type.equals("1")) {
+            param.put("pay", Integer.parseInt(type));
+        } else {
+            param.put("type", type);
+        }
+
         String key = map.get("key");
 //        param.put("key", key == null ? "subject" : key);
-        param.put("key","subject");
-        if ("user_name".equals(key)) {
-            param.put("key", "b.name");
-        }
+        param.put("key", "subject");
+//        if ("user_name".equals(key)) {
+//            param.put("key", "b.name");
+//        }
+
+        param.put("type", map.get("type"));
 
         List<BoardDto> list = boardMapper.listArticle(param);
         if ("user_id".equals(key)) {

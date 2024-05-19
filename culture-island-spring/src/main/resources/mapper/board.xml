@@ -10,6 +10,8 @@
         <result column="subject" property="subject"/>
         <result column="content" property="content"/>
         <result column="hit" property="hit"/>
+        <result column="type" property="type"/>
+        <result column="pay" property="pay"/>
         <result column="register_time" property="registerTime"/>
     </resultMap>
 
@@ -21,6 +23,12 @@
             <if test="key != 'subject'">
                 and ${key} = #{word}
             </if>
+        </if>
+        <if test="type != null and type != ''">
+            and type like concat('%', #{type}, '%')
+        </if>
+        <if test="pay != null and pay != ''">
+            and pay = #{pay}
         </if>
     </sql>
 
@@ -42,8 +50,8 @@
     </select>
 
     <insert id="writeArticle" parameterType="boardDto">
-        insert into article (member_id, name, subject, content, hit, register_time)
-        values (#{memberId}, #{name}, #{subject}, #{content}, 0, now())
+        insert into article (member_id, name, subject, content, hit, type, pay, register_time)
+        values (#{memberId}, #{name}, #{subject}, #{content}, 0, #{type}, #{pay}, now())
         <selectKey resultType="int" keyProperty="articleNo" order="AFTER">
             select last_insert_id()
         </selectKey>
