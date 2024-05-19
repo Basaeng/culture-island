@@ -18,7 +18,7 @@ const rankName = ref('')
 const getRankName = (memberRank) => {
   console.log(memberRank)
   if (memberRank === 1) {
-    rankName = 'newbie'
+    rankName.value = 'newbie'
   } 
   console.log(rankName)
 } 
