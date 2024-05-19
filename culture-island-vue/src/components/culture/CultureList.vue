@@ -1,26 +1,18 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { listArticle } from "@/api/board.js";
-
+import { ref, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+const { VITE_CULTURE_API_URL, VITE_ARTICLE_LIST_SIZE } = import.meta.env
 import PageNavigation from "@/components/common/PageNavigation.vue";
 import CultureCardItem from "./item/CultureCardItem.vue";
-import CultureSide from "./item/CultureSide.vue";
-
+import { CultureAxios } from "@/util/http-culture";
 
 const router = useRouter();
-
-const selectOption = ref([
-  { text: "검색조건", value: "" },
-  { text: "글번호", value: "article_no" },
-  { text: "제목", value: "subject" },
-  { text: "작성자아이디", value: "user_id" },
-]);
+const route = useRoute();
 
 const articles = ref([]);
-const currentPage = ref(1);
+const currentPage = ref(parseInt(route.params.pageno) || 1);
 const totalPage = ref(0);
-const { VITE_ARTICLE_LIST_SIZE } = import.meta.env;
+
 const param = ref({
   pgno: currentPage.value,
   spp: VITE_ARTICLE_LIST_SIZE,
@@ -29,47 +21,49 @@ const param = ref({
 });
 
 onMounted(() => {
-  getArticleList();
+  getCultureList(currentPage.value);
 });
 
-const changeKey = (val) => {
-  console.log("BoarList에서 선택한 조건 : " + val);
-  param.value.key = val;
-};
+watch(() => route.params.pageno, (newPageno) => {
+  currentPage.value = parseInt(newPageno) || 1;
+  param.value.pgno = currentPage.value;
+  getCultureList(currentPage.value);
+});
 
-const getArticleList = () => {
-  console.log("서버에서 글목록 얻어오자!!!", param.value);
-  listArticle(
-    param.value,
-    ({ data }) => {
-      articles.value = data.articles;
-      currentPage.value = data.currentPage;
-      totalPage.value = data.totalPageCount;
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
+const http = CultureAxios()
+
+const getCultureList = (pageno) => {
+  const pagesize = parseInt(VITE_ARTICLE_LIST_SIZE) || 10; // 기본값 설정
+  const start = 1 + ((pageno - 1) * pagesize);
+  const end = pageno * pagesize;
+
+  console.log(`Fetching data for page: ${pageno}`);
+  console.log(`${VITE_CULTURE_API_URL}/${start}/${end}/`);
+
+  http.get(`/${start}/${end}/`)
+    .then(({ data }) => {
+      console.log(data);
+      articles.value = data.articles; // Assuming the API response contains an 'articles' field
+      totalPage.value = Math.ceil(data.total / pagesize); // Assuming the API response contains a 'total' field
+    })
+    .catch(error => {
+      console.error("Error fetching culture list:", error);
+    });
 };
 
 const onPageChange = (val) => {
   console.log(val + "번 페이지로 이동 준비 끝!!!");
   currentPage.value = val;
   param.value.pgno = val;
-  getArticleList();
+  router.push({ name: "culturelist", params: { pageno: val } });
+  getCultureList(val);
 };
 
-const moveWrite = () => {
-  router.push({ name: "article-write" });
-};
 </script>
 
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="align-middle col-lg-3">
-        <CultureSide />
-      </div>
       <div class="col">
         <div class="row align-self-center mb-2">
           <div class="col offset-8">
@@ -81,31 +75,26 @@ const moveWrite = () => {
                   v-model="param.word"
                   placeholder="검색어..."
                 />
-                <button class="btn btn-dark" type="button" @click="getArticleList">검색</button>
+                <button class="btn btn-dark" type="button" @click="getCultureList(currentPage.value)">검색</button>
               </div>
             </form>
           </div>
         </div>
         <div class="row">
-          <culture-card-item v-for="i in 6"/>
-          <!-- <BoardListItem
-            v-for="article in articles"
-            :key="article.articleNo"
-            :article="article"
-            ></BoardListItem> -->
-          </div>
+          <CultureCardItem v-for="article in articles" :key="article.id" :article="article" />
+        </div>
       </div>
     </div>
     <div class="row bottom">
       <div class="col">
         <PageNavigation
-        :current-page="currentPage"
-        :total-page="totalPage"
-        @pageChange="onPageChange"
+          :current-page="currentPage"
+          :total-page="totalPage"
+          @pageChange="onPageChange"
         ></PageNavigation>
       </div>
       <div class="col-1">
-        <button type="button" class="btn btn-outline-primary btn-sm" @click="moveWrite">
+        <button type="button" class="btn btn-outline-primary btn-sm">
           글쓰기
         </button>
       </div>

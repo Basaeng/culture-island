@@ -104,7 +104,7 @@ const router = createRouter({
       redirect: {name: "culturelist"},
       children: [
         {
-          path: "list",
+          path: "list/:pageno",
           name: "culturelist",
           component: CultureList
         },

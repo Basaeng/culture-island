@@ -93,7 +93,7 @@ const moveToMyPage = () => {
             <!-- <a class="nav-link active" href="#">공연 지도</a> -->
           </li>
           <li class="nav-item col-md-3">
-            <router-link :to="{name: 'search'}" class="nav-link active">공연 검색</router-link>
+            <router-link :to="{name: 'culturelist', params: { pageno: 1 } }" class="nav-link active">공연 검색</router-link>
             <!-- <a class="nav-link active" href="#">공연 검색</a> -->
           </li>
           <li class="nav-item dropdown">
