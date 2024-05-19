@@ -17,6 +17,7 @@ public class BoardServiceImpl implements BoardService {
 
     private BoardMapper boardMapper;
     private CommentMapper commentMapper;
+
     @Autowired
     public BoardServiceImpl(BoardMapper boardMapper, CommentMapper commentMapper) {
         this.boardMapper = boardMapper;
@@ -33,16 +34,26 @@ public class BoardServiceImpl implements BoardService {
         param.put("start", start);
         param.put("listSize", sizePerPage);
 
-        String key = map.get("key");
-        param.put("key", key == null ? "" : key);
-        if ("user_name".equals(key)) {
-            param.put("key", "b.name");
+        String type = map.get("type");
+        if (type.equals("0") || type.equals("1")) {
+            param.put("pay", Integer.parseInt(type));
+        } else {
+            param.put("type", type);
         }
 
+        String key = map.get("key");
+//        param.put("key", key == null ? "subject" : key);
+        param.put("key", "subject");
+//        if ("user_name".equals(key)) {
+//            param.put("key", "b.name");
+//        }
+
+
         List<BoardDto> list = boardMapper.listArticle(param);
-        if ("user_id".equals(key)) {
-            param.put("key", "name");
-        }
+//        if ("user_id".equals(key)) {
+//            param.put("key", "name");
+//        }
+        System.out.println(list);
         int totalArticleCount = boardMapper.getTotalArticleCount(param);
         int totalPageCount = (totalArticleCount - 1) / sizePerPage + 1;
 
@@ -79,5 +90,9 @@ public class BoardServiceImpl implements BoardService {
         commentMapper.writeComment(commentDto);
     }
 
+    @Override
+    public List<CommentDto> listComment(int articleNo) throws Exception {
+        return commentMapper.listComment(articleNo);
+    }
 
 }

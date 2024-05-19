@@ -15,5 +15,6 @@ public interface BoardService {
     void deleteArticle(int articleNo) throws Exception;
     void updateHit(int articleNo) throws Exception;
     void writeComment(CommentDto commentDto) throws Exception;
+    List<CommentDto> listComment(int articleNo) throws Exception;
 
 }

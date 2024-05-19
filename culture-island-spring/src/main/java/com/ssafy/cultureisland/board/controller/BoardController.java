@@ -75,6 +75,17 @@ public class BoardController {
         }
     }
 
+    @GetMapping("/comment/{articleNo}")
+    public ResponseEntity<?> listComment(@PathVariable("articleNo") int articleNo) {
+        try {
+            List<CommentDto> articleList = boardService.listComment(articleNo);
+            System.out.println(articleList);
+            return new ResponseEntity<List<CommentDto>>(articleList, HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
     private ResponseEntity<?> exceptionHandling(Exception e) {
         e.printStackTrace();
         return new ResponseEntity<String>("Error : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

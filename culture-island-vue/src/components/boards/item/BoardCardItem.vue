@@ -19,7 +19,12 @@ const moveDetail = (article) => {
     </template>
     <a-card-meta :title="article.subject">
       <template #avatar>
-        <a-avatar src="https://joeschmoe.io/api/v1/random" />
+        <a-avatar>
+          <template #icon>
+            <UserOutlined />
+          </template>
+        </a-avatar>
+        <!-- <a-avatar src="https://joeschmoe.io/api/v1/random" /> -->
       </template>
       <template #description>
         <div class="row">
