@@ -16,8 +16,7 @@ const article = ref({
   content: "",
   name: "",
   memberId: 1, // dummy data
-  // hit: 0,
-  // registerTime: "",
+  type: "",
 });
 
 if (props.type === "modify") {
@@ -73,6 +72,7 @@ function onSubmit() {
 
 function writeArticle() {
   console.log("글등록하자!!", article.value);
+  article.value.name = "ssafy"; // 더미
   registArticle(
     article.value,
     (response) => {
@@ -84,6 +84,40 @@ function writeArticle() {
     (error) => console.log(error)
   );
 }
+
+const selectOptions = ref([
+  {
+    value: "클래식",
+    label: "클래식",
+  },
+  {
+    value: "뮤지컬",
+    label: "뮤지컬",
+  },
+  {
+    value: "전시",
+    label: "전시",
+  },
+  {
+    value: "연극",
+    label: "연극",
+  },
+  {
+    value: "무용",
+    label: "무용",
+  },
+  {
+    value: "국악",
+    label: "국악",
+  },
+]);
+
+const selectKey = ref();
+
+const handleChange = (value) => {
+  article.value.type = value;
+  console.log(article.value);
+};
 
 function updateArticle() {
   console.log(article.value.articleNo + "번글 수정하자!!", article.value);
@@ -108,7 +142,7 @@ function moveList() {
 
 <template>
   <form @submit.prevent="onSubmit">
-    <div class="mb-3">
+    <!-- <div class="mb-3">
       <label for="userid" class="form-label">작성자 ID : </label>
       <input
         type="text"
@@ -117,25 +151,47 @@ function moveList() {
         :disabled="isUseId"
         placeholder="작성자ID..."
       />
+    </div> -->
+    <div class="row">
+      <div class="col">
+        <label for="subject" class="form-label">제목 : </label>
+        <input type="text" class="form-control" v-model="article.subject" placeholder="제목..." />
+      </div>
+      <div class="col-sm-3">
+        <label for="subject" class="form-label">구분 : </label>
+        <a-select
+          v-model:value="selectKey"
+          show-search
+          placeholder="구분..."
+          style="width: 100%"
+          :options="selectOptions"
+          @change="handleChange"
+        ></a-select>
+      </div>
     </div>
-    <div class="mb-3">
-      <label for="subject" class="form-label">제목 : </label>
-      <input type="text" class="form-control" v-model="article.subject" placeholder="제목..." />
-    </div>
-    <div class="mb-3">
+    <div class="mb-3 mt-3">
       <label for="content" class="form-label">내용 : </label>
       <textarea class="form-control" v-model="article.content" rows="10"></textarea>
     </div>
     <div class="col-auto text-center">
-      <button type="submit" class="btn btn-outline-primary mb-3" v-if="type === 'regist'">
+      <button
+        type="submit"
+        class="btn btn-outline-primary mb-3 island_button_style"
+        v-if="type === 'regist'"
+      >
         글작성
       </button>
       <button type="submit" class="btn btn-outline-success mb-3" v-else>글수정</button>
       <button type="button" class="btn btn-outline-danger mb-3 ms-1" @click="moveList">
-        목록으로이동...
+        목록으로
       </button>
     </div>
   </form>
 </template>
 
-<style scoped></style>
+<style scoped>
+.island_button_style {
+  background-color: #920101;
+  color: white;
+}
+</style>
