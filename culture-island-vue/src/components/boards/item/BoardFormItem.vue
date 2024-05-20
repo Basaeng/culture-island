@@ -1,21 +1,41 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { registArticle, getModifyArticle, modifyArticle } from "@/api/board";
+import { registArticle, modifyArticle, detailArticle } from "@/api/board";
+import { Axios } from "@/util/http-common";
+
+onMounted(() => {
+  getMemberDetails();
+});
+
+const http = Axios();
+const member = ref({});
+
+const getMemberDetails = () => {
+  http.get(`member/me`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`
+    }
+  }).then(({data})=>{
+      member.value = data;
+      console.log("member : " + member.value.id + " " + member.value.name)
+  }).catch ((error)=>{
+    console.error('Failed to fetch user details', error);
+  });
+};
 
 const router = useRouter();
 const route = useRoute();
 
-const props = defineProps({ type: String });
+const props = defineProps({ type: String, member:Object });
 
 const isUseId = ref(false);
 
 const article = ref({
-  // articleNo: 0,
   subject: "",
   content: "",
   name: "",
-  memberId: 1, // dummy data
+  memberId: "", 
   type: "",
   pay: "",
 });
@@ -23,9 +43,10 @@ const article = ref({
 if (props.type === "modify") {
   let { articleno } = route.params;
   console.log(articleno + "번글 얻어와서 수정할거야");
-  getModifyArticle(
+  detailArticle(
     articleno,
     ({ data }) => {
+      console.log("data : " + data);
       article.value = data;
       isUseId.value = true;
     },
@@ -122,8 +143,8 @@ const handleOk = () => {
 };
 
 function onSubmit() {
-  // event.preventDefault();
-
+  article.value.name = member.value.name;
+  article.value.memberId = member.value.id;
   if (subjectErrMsg.value) {
     alert(subjectErrMsg.value);
   } else if (contentErrMsg.value) {
@@ -139,7 +160,6 @@ const modalSubTitle = ref("");
 
 function writeArticle() {
   console.log("글등록하자!!", article.value);
-  article.value.name = "ssafy"; // 더미
   open.value = true;
   registArticle(
     article.value,
@@ -149,10 +169,10 @@ function writeArticle() {
       modalSubTitle.value = "글을 작성하였어요, 목록으로 돌아갈까요?"
     },
     (error) => {
-      console.log(error);
       modalStatus.value = "error"
       modalTitle.value = "작성 실패"
       modalSubTitle.value = "글을 작성하는데 실패했어요, 목록으로 돌아갈까요?"
+      console.log(error);
     }
   );
 }
@@ -164,14 +184,14 @@ function updateArticle() {
     article.value,
     (response) => {
       modalStatus.value = "success"
-      modalTitle.value = "작성 완료"
-      modalSubTitle.value = "글을 작성하였어요, 목록으로 돌아갈까요?"
+      modalTitle.value = "수정 완료"
+      modalSubTitle.value = "글을 수정하였어요, 목록으로 돌아갈까요?"
     },
     (error) => {
       console.log(error);
       modalStatus.value = "error"
-      modalTitle.value = "작성 실패"
-      modalSubTitle.value = "글을 작성하는데 실패했어요, 목록으로 돌아갈까요?"
+      modalTitle.value = "수정 실패"
+      modalSubTitle.value = "글을 수정하는데 실패했어요, 목록으로 돌아갈까요?"
     }
   );
 }
@@ -241,22 +261,12 @@ function moveList() {
   </form>
   <div>
     <a-modal v-model:open="open" title="" :confirm-loading="confirmLoading" @ok="handleOk">
-      <!-- <div v-if="httpRequest"> -->
         <a-result
           :status="`${modalStatus}`"
           :title="`${modalTitle}`"
           :sub-title="`${modalSubTitle}`"
         >
         </a-result>
-      <!-- </div> -->
-      <!-- <div v-if="!httpRequest">
-        <a-result
-          status="error"
-          title="작성 실패"
-          sub-title="글을 작성하는데 실패했어요, 목록으로 돌아갈까요?"
-        >
-        </a-result>
-      </div> -->
     </a-modal>
   </div>
 </template>

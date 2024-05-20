@@ -19,12 +19,12 @@ function registArticle(article, success, fail) {
 }
 
 function getModifyArticle(articleno, success, fail) {
-  // local.get(`/board/modify/${articleno}`).then(success).catch(fail);
+  // http.get(`/board/modify/${articleno}`).then(success).catch(fail);
   console.log("getmodify");
 }
 
 function modifyArticle(article, success, fail) {
-  // local.put(`/board`, JSON.stringify(article)).then(success).catch(fail);
+  http.put(`/board`, JSON.stringify(article)).then(success).catch(fail);
   console.log("modify");
 }
 

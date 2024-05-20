@@ -1,8 +1,10 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { h, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { listArticle } from "@/api/board.js";
-import { Empty } from "ant-design-vue";
+import { Axios } from "@/util/http-common";
+import { WarningOutlined } from "@ant-design/icons-vue";
+import { Empty, notification } from "ant-design-vue";
 
 import BoardSideNavigation from "./item/BoardSideNavigation.vue";
 import BoardCardItem from "./item/BoardCardItem.vue";
@@ -27,7 +29,27 @@ const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
 
 onMounted(() => {
   getArticleList();
+  getMemberDetails();
 });
+
+const http = Axios();
+const member = ref({});
+
+const getMemberDetails = () => {
+  http
+    .get(`member/me`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    })
+    .then(({ data }) => {
+      member.value = data;
+      console.log("member : " + member.value.id + " " + member.value.name);
+    })
+    .catch((error) => {
+      console.error("Failed to fetch user details", error);
+    });
+};
 
 const getArticleList = () => {
   console.log("서버에서 글목록 얻어오자!!!", param.value);
@@ -60,6 +82,24 @@ const onPageChange = (val) => {
 
 const moveWrite = () => {
   router.push({ name: "article-write" });
+};
+
+const [api, contextHolder] = notification.useNotification();
+const open = (placement) => openNotification(placement);
+const openNotification = (placement) => {
+  if (member.value != "") {
+    moveWrite();
+  } else {
+    api.info({
+      message: `로그인 필요`,
+      description: "로그인이 필요한 기능입니다 로그인을 해주세요",
+      placement,
+      icon: () =>
+        h(WarningOutlined, {
+          style: "color: #920101",
+        }),
+    });
+  }
 };
 </script>
 
@@ -121,13 +161,20 @@ const moveWrite = () => {
         ></PageNavigation> -->
       </div>
       <div class="col-1">
-        <button
+        <!-- <button
           type="button"
           class="btn btn-outline-primary btn-sm island_button_style"
           @click="moveWrite"
         >
           글쓰기
-        </button>
+        </button> -->
+        <a-space>
+          <a-button type="primary" @click="() => open('topLeft')">
+            <RadiusUpleftOutlined />
+            글쓰기
+          </a-button>
+        </a-space>
+        <contextHolder />
       </div>
     </div>
   </div>

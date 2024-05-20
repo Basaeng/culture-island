@@ -5,6 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import { detailArticle, deleteArticle } from "@/api/board";
 import { listComment, registComment } from "@/api/comment";
 import { UserOutlined } from "@ant-design/icons-vue";
+import { Axios } from '@/util/http-common';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -22,10 +23,28 @@ const value = ref("");
 const comment = ref({});
 const article = ref({});
 
+const http = Axios();
+
 onMounted(() => {
+  getMemberDetails();
   getArticle();
   getComments();
 });
+
+const member = ref({})
+
+const getMemberDetails = () => {
+  http.get(`member/me`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`
+    }
+  }).then(({data})=>{
+      member.value = data;
+      // console.log("member : " + member.value.id)
+  }).catch ((error)=>{
+    console.error('Failed to fetch user details', error);
+  })
+}
 
 const getArticle = () => {
   // const { articleno } = route.params;
@@ -34,7 +53,7 @@ const getArticle = () => {
     articleno,
     ({ data }) => {
       article.value = data;
-      console.log(article.value);
+      // console.log("article : " + article.value.memberId);
     },
     (error) => {
       console.log(error);
@@ -48,7 +67,7 @@ const getComments = () => {
     articleno,
     ({ data }) => {
       comments.value = data;
-      console.log(comments.value);
+      // console.log(comments.value);
     },
     (error) => {
       console.log(error);
@@ -142,12 +161,14 @@ function onDeleteArticle() {
             <button type="button" class="btn btn-outline-primary mb-3" @click="moveList">
               글목록
             </button>
-            <button type="button" class="btn btn-outline-success mb-3 ms-1" @click="moveModify">
-              글수정
-            </button>
-            <button type="button" class="btn btn-outline-danger mb-3 ms-1" @click="onDeleteArticle">
-              글삭제
-            </button>
+            <div v-if="member.id == article.memberId">
+              <button type="button" class="btn btn-outline-success mb-3 ms-1" @click="moveModify">
+                글수정
+              </button>
+              <button type="button" class="btn btn-outline-danger mb-3 ms-1" @click="onDeleteArticle">
+                글삭제
+              </button>
+            </div>
           </div>
         </div>
         <div class="row">
