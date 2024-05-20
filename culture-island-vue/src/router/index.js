@@ -17,7 +17,7 @@ import CultureCalendar from "@/components/culture/CultureCalendar.vue"
 import CultureMap from "@/components/culture/CultureMap.vue"
 
 import Test from "@/views/Test.vue";
-import CultureDetail from "@/components/culture/CultureDetail.vue";
+import CultureDetail from "@/views/CultureDetail.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -119,12 +119,12 @@ const router = createRouter({
           name: "culturemap",
           component: CultureMap
         },
-        {
-          path: "view/:CODENAME/:TITLE/:DATE",
-          name: "cultureview",
-          component: CultureDetail
-        }
       ]
+    },
+    {
+      path: "/view/:CODENAME/:TITLE/:DATE",
+      name: "cultureview",
+      component: CultureDetail
     },
     {
       path: '/test',
