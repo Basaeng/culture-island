@@ -95,4 +95,9 @@ public class BoardServiceImpl implements BoardService {
         return commentMapper.listComment(articleNo);
     }
 
+    @Override
+    public void modifyArticle(BoardDto boardDto) throws Exception {
+        boardMapper.modifyArticle(boardDto);
+    }
+
 }

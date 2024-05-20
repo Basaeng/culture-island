@@ -133,6 +133,10 @@ function onSubmit() {
   }
 }
 
+const modalStatus = ref("");
+const modalTitle = ref("");
+const modalSubTitle = ref("");
+
 function writeArticle() {
   console.log("글등록하자!!", article.value);
   article.value.name = "ssafy"; // 더미
@@ -140,12 +144,15 @@ function writeArticle() {
   registArticle(
     article.value,
     (response) => {
-      if (response.status == 201) msg = "글등록이 완료되었습니다.";
-      // alert(msg);
+      modalStatus.value = "success"
+      modalTitle.value = "작성 완료"
+      modalSubTitle.value = "글을 작성하였어요, 목록으로 돌아갈까요?"
     },
     (error) => {
-      httpRequest.value = false;
       console.log(error);
+      modalStatus.value = "error"
+      modalTitle.value = "작성 실패"
+      modalSubTitle.value = "글을 작성하는데 실패했어요, 목록으로 돌아갈까요?"
     }
   );
 }
@@ -156,16 +163,15 @@ function updateArticle() {
   modifyArticle(
     article.value,
     (response) => {
-      let msg = "글수정 처리시 문제 발생했습니다.";
-      if (response.status == 200) msg = "글정보 수정이 완료되었습니다.";
-      // alert(msg);
-      moveList();
-      // router.push({ name: "article-view" });
-      // router.push(`/board/view/${article.value.articleNo}`);
+      modalStatus.value = "success"
+      modalTitle.value = "작성 완료"
+      modalSubTitle.value = "글을 작성하였어요, 목록으로 돌아갈까요?"
     },
     (error) => {
-      httpRequest.value = false;
       console.log(error);
+      modalStatus.value = "error"
+      modalTitle.value = "작성 실패"
+      modalSubTitle.value = "글을 작성하는데 실패했어요, 목록으로 돌아갈까요?"
     }
   );
 }
@@ -235,22 +241,22 @@ function moveList() {
   </form>
   <div>
     <a-modal v-model:open="open" title="" :confirm-loading="confirmLoading" @ok="handleOk">
-      <div v-if="httpRequest === true">
+      <!-- <div v-if="httpRequest"> -->
         <a-result
-          status="success"
-          title="작성 완료"
-          sub-title="글을 작성하였어요, 목록으로 돌아갈까요?"
+          :status="`${modalStatus}`"
+          :title="`${modalTitle}`"
+          :sub-title="`${modalSubTitle}`"
         >
         </a-result>
-      </div>
-      <div v-else>
+      <!-- </div> -->
+      <!-- <div v-if="!httpRequest">
         <a-result
           status="error"
           title="작성 실패"
           sub-title="글을 작성하는데 실패했어요, 목록으로 돌아갈까요?"
         >
         </a-result>
-      </div>
+      </div> -->
     </a-modal>
   </div>
 </template>

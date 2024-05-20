@@ -86,6 +86,16 @@ public class BoardController {
         }
     }
 
+    @PutMapping()
+    public ResponseEntity<?> updateArticle(@RequestBody BoardDto boardDto) {
+        try {
+            boardService.modifyArticle(boardDto);
+            return new ResponseEntity<Void>(HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
     private ResponseEntity<?> exceptionHandling(Exception e) {
         e.printStackTrace();
         return new ResponseEntity<String>("Error : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
