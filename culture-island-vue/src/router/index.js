@@ -11,6 +11,8 @@ import RegisterView from "@/views/RegisterView.vue";
 import MyPageView from "@/views/MyPageView.vue";
 import MemberInfo from "@/components/mypage/MemberInfo.vue";
 import MyArticle from "@/components/mypage/MyArticle.vue";
+import LikedShows from "@/components/mypage/LikedShows.vue";
+
 import CultureSearch from "@/views/CultureSearch.vue";
 import CultureList from "@/components/culture/CultureList.vue"
 import CultureCalendar from "@/components/culture/CultureCalendar.vue"
@@ -95,6 +97,11 @@ const router = createRouter({
           path: "myarticle",
           name: "myarticle",
           component: MyArticle
+        },
+        {
+          path: "likedshows",
+          name: "likedshows",
+          component: LikedShows
         }
       ]
     },

@@ -12,7 +12,7 @@ import { RouterLink } from 'vue-router';
             <a class="nav-link active" href="#">마이페이지</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">관심공연</a>
+            <router-link  class="nav-link" :to="{name: 'likedshows'}">관심 공연</router-link>
           </li>
           <li class="nav-item">
             <router-link  class="nav-link" :to="{name: 'myarticle'}">내 게시글</router-link>

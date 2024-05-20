@@ -3,6 +3,8 @@ package com.ssafy.cultureisland.culture.model;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface CultureMapper {
@@ -10,7 +12,11 @@ public interface CultureMapper {
 
     void addCulture(CultureDTO culture);
 
-    boolean checkLikeExists(String memberId, String cultureCodename, String cultureTitle, String cultureDate);
+    LikeResponseDTO checkLikeExists(String memberId, String cultureCodename, String cultureTitle, String cultureDate);
 
     void addLike(LikeDTO like);
+
+    List<LikeDTO> getLikeByMemberId(String memberId);
+
+    void deleteLikeByMemberId(String memberId);
 }

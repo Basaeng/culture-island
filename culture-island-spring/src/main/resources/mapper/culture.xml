@@ -13,12 +13,35 @@
         VALUES (#{title}, #{date}, #{codename}, #{guname}, #{place}, #{useTrgt}, #{useFee}, #{startDate}, #{log}, #{lat}, #{isFree}, #{hmpgAddr}, #{score})
     </insert>
 
-    <select id="checkLikeExists" resultType="boolean">
-        SELECT COUNT(*) > 0 FROM liked_shows WHERE member_id = #{memberId} AND culture_codename = #{cultureCodename} AND culture_title = #{cultureTitle} AND culture_date = #{cultureDate}
+    <select id="checkLikeExists" resultType="com.ssafy.cultureisland.culture.model.LikeResponseDTO">
+        SELECT
+            (SELECT COUNT(*) FROM liked_shows
+             WHERE member_id = #{memberId}
+               AND culture_codename = #{cultureCodename}
+               AND culture_title = #{cultureTitle}
+               AND culture_date = #{cultureDate}) > 0 AS isExists,
+            (SELECT id FROM liked_shows
+             WHERE member_id = #{memberId}
+               AND culture_codename = #{cultureCodename}
+               AND culture_title = #{cultureTitle}
+               AND culture_date = #{cultureDate}
+                                                         LIMIT 1) AS id
+        FROM DUAL
     </select>
 
     <insert id="addLike">
         INSERT INTO liked_shows (member_id, culture_codename, culture_title, culture_date)
         VALUES (#{memberId}, #{cultureCodename}, #{cultureTitle}, #{cultureDate})
     </insert>
+
+    <select id="getLikeByMemberId" parameterType="string" resultType="com.ssafy.cultureisland.culture.model.LikeDTO">
+        SELECT id, member_id AS memberId, culture_title AS cultureTitle, culture_date AS cultureDate, culture_codename AS cultureCodename
+        FROM liked_shows
+        WHERE member_id = #{memberId}
+    </select>
+
+    <delete id="deleteLikeByMemberId" parameterType="map">
+        DELETE FROM liked_shows
+        WHERE id = #{id}
+    </delete>
 </mapper>
