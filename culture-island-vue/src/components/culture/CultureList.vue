@@ -9,15 +9,24 @@ import { CultureAxios } from "@/util/http-culture";
 const router = useRouter();
 const route = useRoute();
 
-const articles = ref([]);
+const props = defineProps({
+  selectedType: {
+    type: String,
+    default: null,
+  },
+});
+
+const items = ref([]);
 const currentPage = ref(parseInt(route.params.pageno) || 1);
 const totalPage = ref(0);
+const noDataMessage = ref("");
 
 const param = ref({
   pgno: currentPage.value,
   spp: VITE_ARTICLE_LIST_SIZE,
   key: "",
   word: "",
+  type: props.selectedType || "",
 });
 
 onMounted(() => {
@@ -30,6 +39,11 @@ watch(() => route.params.pageno, (newPageno) => {
   getCultureList(currentPage.value);
 });
 
+watch(() => props.selectedType, (newType) => {
+  param.value.type = newType || "";
+  searchCultureList();
+});
+
 const http = CultureAxios();
 
 const getCultureList = (pageno) => {
@@ -37,19 +51,27 @@ const getCultureList = (pageno) => {
   const start = 1 + ((pageno - 1) * pagesize);
   const end = pageno * pagesize;
 
-  console.log(`Fetching data for page: ${pageno}`);
-  console.log(`${VITE_CULTURE_API_URL}/${start}/${end}/`);
+  // console.log(`Fetching data for page: ${pageno}`);
+  // console.log(`${VITE_CULTURE_API_URL}/${start}/${end}/`);
 
-  let apiUrl = `${VITE_CULTURE_API_URL}/${start}/${end}/`;
+  let apiUrl = `/${start}/${end}/`;
 
   http.get(apiUrl)
     .then(({ data }) => {
-      console.log(data);
-      articles.value = data.articles;
-      totalPage.value = Math.ceil(data.total / pagesize);
+      console.log(data)
+      if (data.culturalEventInfo && data.culturalEventInfo.row.length > 0) {
+        items.value = data.culturalEventInfo.row;
+        totalPage.value = Math.ceil(data.total / pagesize);
+        noDataMessage.value = "";
+      } else {
+        items.value = [];
+        totalPage.value = 0;
+        noDataMessage.value = data.RESULT.MESSAGE || "No data available.";
+      }
     })
     .catch(error => {
       console.error("Error fetching culture list:", error);
+      noDataMessage.value = "Error fetching data.";
     });
 };
 
@@ -60,19 +82,35 @@ const searchCultureList = () => {
   const end = pageno * pagesize;
   const searchWord = param.value.word;
 
-  console.log(`Fetching data for page: ${pageno}`);
-  console.log(`${VITE_CULTURE_API_URL}/${start}/${end}/${searchWord}`);
+  // console.log(`Fetching data for page: ${pageno}`);
+  // console.log(`${VITE_CULTURE_API_URL}/${start}/${end}/${searchWord}`);
 
-  let apiUrl = `${VITE_CULTURE_API_URL}/${start}/${end}/%20/${searchWord}`;
+  let apiUrl = `/${start}/${end}/`;
+
+  if (param.value.type) {
+    apiUrl += `${param.value.type}/`;
+  } else {
+    apiUrl += '%20/'
+  }
+
+  apiUrl += searchWord
 
   http.get(apiUrl)
     .then(({ data }) => {
-      console.log(data);
-      articles.value = data.articles;
-      totalPage.value = Math.ceil(data.total / pagesize);
+      console.log(data)
+      if (data.culturalEventInfo && data.culturalEventInfo.row.length > 0) {
+        items.value = data.culturalEventInfo.row;
+        totalPage.value = Math.ceil(data.total / pagesize);
+        noDataMessage.value = "";
+      } else {
+        items.value = [];
+        totalPage.value = 0;
+        noDataMessage.value = data.RESULT.MESSAGE || "No data available.";
+      }
     })
     .catch(error => {
       console.error("Error fetching culture list:", error);
+      noDataMessage.value = "Error fetching data.";
     });
 };
 
@@ -107,7 +145,12 @@ const onPageChange = (val) => {
           </div>
         </div>
         <div class="row">
-          <CultureCardItem v-for="article in articles" :key="article.id" :article="article" />
+          <div v-if="noDataMessage" class="col">
+            <p>{{ noDataMessage }}</p>
+          </div>
+            <CultureCardItem v-for="(item, index) in items" :key="index" :item="item">
+          </CultureCardItem>
+
         </div>
       </div>
     </div>

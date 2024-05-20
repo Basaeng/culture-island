@@ -3,7 +3,7 @@ import { h, reactive } from "vue";
 import { PieChartOutlined, CreditCardOutlined } from "@ant-design/icons-vue";
 import { theme } from "ant-design-vue";
 
-const emit = defineEmits(["seleted"]);
+const emit = defineEmits(["selected"]);
 
 function getItem(label, key, icon, children, type) {
   return {

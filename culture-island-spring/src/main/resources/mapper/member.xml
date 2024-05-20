@@ -5,15 +5,28 @@
 
 <mapper namespace="com.ssafy.cultureisland.member.model.MemberMapper">
 
-    <select id="findAll" resultType="HashMap">
+    <resultMap id="memberResultMap" type="com.ssafy.cultureisland.member.MemberDTO">
+        <id property="id" column="id" />
+        <result property="email" column="email" />
+        <result property="password" column="password" />
+        <result property="name" column="name" />
+        <result property="number" column="number" />
+        <result property="birth" column="birth" />
+        <result property="gender" column="gender" />
+        <result property="memberRank" column="member_rank" />
+        <result property="imglink" column="imglink" />
+        <result property="intro" column="intro" />
+    </resultMap>
+
+    <select id="findAll" resultMap="memberResultMap">
         SELECT * FROM member;
     </select>
 
-    <select id="findById" resultType="com.ssafy.cultureisland.member.MemberDTO" parameterType="Integer">
+    <select id="findById" resultMap="memberResultMap" parameterType="Integer">
         SELECT * FROM member WHERE id = #{id}
     </select>
 
-    <select id="findByUsername" resultType="com.ssafy.cultureisland.member.MemberDTO" parameterType="String">
+    <select id="findByUsername" resultMap="memberResultMap" parameterType="String">
         SELECT * FROM member WHERE name = #{name}
     </select>
 
@@ -26,7 +39,6 @@
         DELETE FROM member WHERE id = #{id}
     </delete>
 
-    <!-- Update a member's information -->
     <update id="updateMember" parameterType="com.ssafy.cultureisland.member.MemberDTO">
         UPDATE member
         SET email = #{email},
