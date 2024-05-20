@@ -2,6 +2,9 @@
 import { CultureAxios } from "@/util/http-culture";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+
+import CultureCardItem from "./item/CultureCardItem.vue";
+
 const { VITE_CULTURE_API_URL } = import.meta.env;
 
 const http = CultureAxios();
@@ -10,26 +13,30 @@ const value = ref();
 const events = ref([]);
 const selectedEvents = ref([]);
 
+const spinning = ref(true);
+const selectedSpinning = ref(false);
+
 onMounted(() => {
   const date = nowMonth();
   getEventList(date);
 });
 
 const getEventList = async (date) => {
-  await http.get(`0/200/%20/%20/${date}`).then(({ data }) => {
+  await http.get(`0/900/%20/%20/${date}`).then(({ data }) => {
     events.value = data.culturalEventInfo.row;
-    console.log(events.value);
   });
+  spinning.value = false;
 };
 
 const nowMonth = () => {
   const today = new Date();
 
   const year = today.getFullYear();
-  const month = ("0" + (today.getMonth() + 1)).slice(-2);
-  //   const day = ("0" + today.getDate()).slice(-2);
+  // const month = ("0" + (today.getMonth() + 1)).slice(-2);
 
-  const dateStr = year + "-" + month;
+  // const dateStr = year + "-" + month;
+  // const dateStr = year;
+  const dateStr = "20";
   return dateStr;
 };
 
@@ -37,19 +44,21 @@ const onPanelChange = (value, mode) => {
   console.log("판넬 : " + value, mode);
 };
 
-const pageno = 1;
-const pagesize = 5;
-// pageno에 따라
-const onSelectDate = (date) => {
+const onSelectDate = async (date) => {
+  selectedSpinning.value = true;
   const dateString = date.format("YYYY-MM-DD");
-  console.log(dateString);
-  console.log(VITE_CULTURE_API_URL);
-  http.get(`/0/6/%20/%20/${dateString}`).then(({ data }) => {
-    console.log(data);
-  });
-};
+  await http
+    .get(`/0/900/%20/%20/${dateString}`)
+    .then(({ data }) => {
+      console.log(data.culturalEventInfo.row);
+      selectedEvents.value = data.culturalEventInfo.row;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
-const checkedDate = ref();
+  selectedSpinning.value = false;
+};
 
 const getListData = (value) => {
   const day = value.date();
@@ -60,7 +69,6 @@ const getListData = (value) => {
       content: event.TITLE,
     }));
 
-  //   console.log("list data : " + JSON.stringify(listData));
   return listData;
 };
 const getMonthData = (value) => {
@@ -71,15 +79,27 @@ const getMonthData = (value) => {
 </script>
 
 <template>
-  <a-calendar v-model:value="value" @panelChange="onPanelChange" @select="onSelectDate">
-    <template #dateCellRender="{ current }">
-      <ul class="events">
-        <li v-for="item in getListData(current)" :key="item.content">
-          <a-badge :status="item.type" :text="item.content" />
-        </li>
-      </ul>
-    </template>
-  </a-calendar>
+  <a-spin :spinning="spinning" tip="불러오는중..." size="large" class="mt-5 pt-5">
+    <a-calendar v-model:value="value" @panelChange="onPanelChange" @select="onSelectDate">
+      <template #dateCellRender="{ current }">
+        <ul class="events">
+          <li v-for="item in getListData(current)" :key="item.content">
+            <a-badge :status="item.type" :text="item.content" />
+          </li>
+        </ul>
+      </template>
+    </a-calendar>
+  </a-spin>
+  <a-spin :spinning="selectedSpinning" tip="불러오는중..." size="large" class="mt-5 pt-5">
+    <div class="row">
+      <CultureCardItem
+        v-for="(event, index) in selectedEvents"
+        :key="index"
+        type="calendar"
+        :item="event"
+      />
+    </div>
+  </a-spin>
 </template>
 
 <style scoped>
