@@ -43,17 +43,17 @@ DROP TABLE IF EXISTS `cultureisland`.`culture` ;
 
 CREATE TABLE IF NOT EXISTS `cultureisland`.`culture` (
                                                          `title` VARCHAR(64) NOT NULL,
-    `date` VARCHAR(32) NOT NULL,
-    `codename` VARCHAR(16) NOT NULL,
-    `guname` VARCHAR(16) NOT NULL,
-    `place` VARCHAR(64) NOT NULL,
-    `use_trgt` VARCHAR(64) NOT NULL,
+    `date` VARCHAR(255) NOT NULL,
+    `codename` VARCHAR(255) NOT NULL,
+    `guname` VARCHAR(255) NOT NULL,
+    `place` VARCHAR(255) NOT NULL,
+    `use_trgt` VARCHAR(255) NOT NULL,
     `use_fee` VARCHAR(256) NULL,
     `start_date` DATETIME NOT NULL,
     `log` DECIMAL(20,17) NOT NULL,
     `lat` DECIMAL(20,17) NOT NULL,
-    `is_free` VARCHAR(8) NOT NULL,
-    `hmpg_addr` VARCHAR(64) NOT NULL,
+    `is_free` VARCHAR(255) NOT NULL,
+    `hmpg_addr` VARCHAR(255) NOT NULL,
     `score` DECIMAL(3,2) NULL,
     PRIMARY KEY (`title`, `date`))
     ENGINE = InnoDB;
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `cultureisland`.`culture` (
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `cultureisland`.`liked_shows` ;
 
-CREATE TABLE IF NOT EXISTS `cultureisland`.`like_dshows` (
+CREATE TABLE IF NOT EXISTS `cultureisland`.`liked_shows` (
                                                       `id` INT NOT NULL AUTO_INCREMENT,
                                                       `member_id` INT NOT NULL,
                                                       `culture_title` VARCHAR(64) NOT NULL,

@@ -3,14 +3,17 @@ import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
 import { CultureAxios } from "@/util/http-culture";
 import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
+
 import emptyHeart from '../assets/emptyheart.png';
 import filledHeart from '../assets/filledheart.png';
+import { Axios } from "@/util/http-common";
 
 const route = useRoute();
 const CODENAME = route.params.CODENAME;
 const TITLE = route.params.TITLE;
 const DATE = route.params.DATE;
 
+const serverhttp = Axios();
 const http = CultureAxios();
 
 const items = ref([]);
@@ -48,11 +51,54 @@ const getCultureDetail = () => {
 
 const toggleHeart = () => {
   if (!isHeartFilled.value) {
-    alert('관심 공연에 등록했습니다')
+    checkAndAddCulture().then(() => {
+      alert('관심 공연에 등록했습니다')
+      isHeartFilled.value = true;
+    })
   } else {
     alert('관심 공연에서 제외했습니다.')
   }
   isHeartFilled.value = !isHeartFilled.value;  // 클릭 시 상태를 토글
+};
+
+const checkAndAddCulture = () => {
+  return new Promise((resolve, reject) => {
+    serverhttp.get(`/culture/check-culture/${CODENAME}/${TITLE}/${DATE}`)
+      .then(({ data }) => {
+        console.log(data);
+        if (!data.exists) {
+          console.log('추가를 원해요');
+          let cultureData = {
+            title: itemData.value.TITLE,
+            date: itemData.value.DATE,
+            codename: CODENAME,
+            guname: itemData.value.GUNAME,
+            place: itemData.value.PLACE,
+            useTrgt: itemData.value.USE_TRGT,
+            useFee: itemData.value.USE_FEE,
+            startDate: itemData.value.STRTDATE,
+            log: parseFloat(itemData.value.LOG),
+            lat: parseFloat(itemData.value.LAT),
+            isFree: itemData.value.IS_FREE,
+            hmpgAddr: itemData.value.HMPG_ADDR,
+            score: parseFloat(itemData.value.SCORE)
+          };
+          console.log("문화데이터 전송 출력", cultureData);
+          serverhttp.post(`/culture/add-culture`, cultureData).then(() => {
+            console.log("추가가 되써요");
+            resolve();
+          }).catch(error => {
+            console.log("Error adding culture data:", error);
+            reject();
+          });
+        } else {
+          resolve();
+        }
+      }).catch(error => {
+        console.log("Error checking culture data:", error);
+        reject();
+      });
+  });
 };
 
 const coordinate = ref({
