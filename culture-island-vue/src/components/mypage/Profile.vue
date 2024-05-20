@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import { defineProps } from 'vue';
 
 const props = defineProps({
@@ -9,19 +9,17 @@ const props = defineProps({
   }
 })
 
-onMounted(() => {
-  getRankName(member.memberRank)
-})
-
 const rankName = ref('')
 
 const getRankName = (memberRank) => {
   console.log(memberRank)
   if (memberRank === 1) {
-    rankName.value = 'newbie'
+    return 'newbie'
   } 
   console.log(rankName)
 } 
+
+
 
 </script>
 
@@ -32,7 +30,7 @@ const getRankName = (memberRank) => {
       <div class="info mt-5">
           <div class="d-flex justify-content-between align-items-center">
           이름: {{ member.name }}
-          <button class="btn btn-secondary">프로필 수정</button>
+          <button class="btn btn-secondary" >프로필 수정</button>
           </div>
           <hr>
           이메일: {{ member.email }}
@@ -41,7 +39,7 @@ const getRankName = (memberRank) => {
       </div>
       <div class="userdata mt-5">
         <div class="mt-5"></div>
-        <div class="mt-4">회원 등급: {{ rankName }}</div>
+        <div class="mt-4">회원 등급: {{ getRankName(member.memberRank) }}</div>
         <div class="mt-4">관심 분류:</div>
         <div class="mt-4">전화: {{ member.number }}</div>
       </div>

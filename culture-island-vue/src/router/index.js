@@ -17,6 +17,7 @@ import CultureCalendar from "@/components/culture/CultureCalendar.vue"
 import CultureMap from "@/components/culture/CultureMap.vue"
 
 import Test from "@/views/Test.vue";
+import CultureDetail from "@/components/culture/CultureDetail.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -101,7 +102,7 @@ const router = createRouter({
       path: "/search",
       name: "search",
       component: CultureSearch,
-      redirect: {name: "culturelist"},
+      redirect: { name: "culturelist" },
       children: [
         {
           path: "list/:pageno",
@@ -117,9 +118,14 @@ const router = createRouter({
           path: "map",
           name: "culturemap",
           component: CultureMap
+        },
+        {
+          path: "view/:CODENAME/:TITLE/:DATE",
+          name: "cultureview",
+          component: CultureDetail
         }
       ]
-    }, 
+    },
     {
       path: '/test',
       name: 'test',
