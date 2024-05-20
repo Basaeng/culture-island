@@ -62,9 +62,9 @@ CREATE TABLE IF NOT EXISTS `cultureisland`.`culture` (
 -- -----------------------------------------------------
 -- Table `cultureisland`.`like`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `cultureisland`.`like` ;
+DROP TABLE IF EXISTS `cultureisland`.`liked_shows` ;
 
-CREATE TABLE IF NOT EXISTS `cultureisland`.`like` (
+CREATE TABLE IF NOT EXISTS `cultureisland`.`like_dshows` (
                                                       `id` INT NOT NULL AUTO_INCREMENT,
                                                       `member_id` INT NOT NULL,
                                                       `culture_title` VARCHAR(64) NOT NULL,
