@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue';
-import Side from '@/components/culture/item/CultureSide.vue';
+import { ref } from "vue";
+import Side from "@/components/culture/item/CultureSide.vue";
 
 const selectedType = ref(null);
 
@@ -19,6 +19,4 @@ const selectedTypeHandler = (type) => {
   </div>
 </template>
 
-<style scoped>
-/* Add any scoped styles here if necessary */
-</style>
+<style scoped></style>
