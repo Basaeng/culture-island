@@ -2,6 +2,7 @@ package com.ssafy.cultureisland.culture.service;
 
 import com.ssafy.cultureisland.culture.model.CultureDTO;
 import com.ssafy.cultureisland.culture.model.CultureMapper;
+import com.ssafy.cultureisland.culture.model.LikeDTO;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,5 +20,13 @@ public class CultureService {
 
     public void addCulture(CultureDTO culture) {
         cultureMapper.addCulture(culture);
+    }
+
+    public boolean checkLikeExists(String memberId, String codename, String title, String date) {
+        return cultureMapper.checkLikeExists(memberId, codename, title, date);
+    }
+
+    public void addLikeByMemberId(LikeDTO like) {
+        cultureMapper.addLike(like);
     }
 }

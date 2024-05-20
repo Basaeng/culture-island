@@ -20,6 +20,7 @@ const items = ref([]);
 const noDataMessage = ref("");
 const itemData = ref(null);
 const isHeartFilled = ref(false);  // 하트 상태를 관리하는 ref
+const member = ref(null)
 
 const getCultureDetail = () => {
   let apiUrl = `/1/1/${CODENAME}/${TITLE}/${DATE}`;
@@ -38,6 +39,8 @@ const getCultureDetail = () => {
           lng: parseFloat(itemData.value.LAT)
         };
 
+        checkIfLiked();
+
       } else {
         items.value = [];
         noDataMessage.value = data.RESULT.MESSAGE || "No data available.";
@@ -47,6 +50,20 @@ const getCultureDetail = () => {
       console.error("Error fetching culture list:", error);
       noDataMessage.value = "Error fetching data.";
     });
+};
+
+const getMemberDetails = () => {
+  serverhttp.get(`member/me`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`
+    }
+  }).then(({ data }) => {
+    member.value = data;
+    console.log(data);
+    getCultureDetail();
+  }).catch((error) => {
+    console.error('Failed to fetch user details', error);
+  });
 };
 
 const toggleHeart = () => {
@@ -85,6 +102,7 @@ const checkAndAddCulture = () => {
           };
           console.log("문화데이터 전송 출력", cultureData);
           serverhttp.post(`/culture/add-culture`, cultureData).then(() => {
+            addLike().then(resolve).catch(reject);
             console.log("추가가 되써요");
             resolve();
           }).catch(error => {
@@ -92,7 +110,7 @@ const checkAndAddCulture = () => {
             reject();
           });
         } else {
-          resolve();
+          addLike().then(resolve).catch(reject);
         }
       }).catch(error => {
         console.log("Error checking culture data:", error);
@@ -101,13 +119,39 @@ const checkAndAddCulture = () => {
   });
 };
 
+const addLike = () => {
+  return new Promise((resolve, reject) => {
+    const likeData = {
+      memberId: member.value.id,
+      cultureCodename: itemData.value.CODENAME,
+      cultureTitle: itemData.value.TITLE,
+      cultureDate: itemData.value.DATE
+    };
+    serverhttp.post(`/culture/add_like`, likeData).then(() => {
+      resolve();
+    }).catch(error => {
+      console.log("Error adding like data:", error);
+      reject();
+    });
+  });
+};
+
+const checkIfLiked = () => {
+  serverhttp.get(`/culture/check_like/${member.value.id}/${CODENAME}/${TITLE}/${DATE}`)
+    .then(({ data }) => {
+      isHeartFilled.value = data.liked;
+    }).catch(error => {
+    console.error("Errer checking like status:", error)
+  })
+}
+
 const coordinate = ref({
   lat: 37.566826,
   lng: 126.9786567
 });
 
 onMounted(() => {
-  getCultureDetail();
+  getMemberDetails();
 });
 </script>
 

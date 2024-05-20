@@ -65,10 +65,11 @@ CREATE TABLE IF NOT EXISTS `cultureisland`.`culture` (
 DROP TABLE IF EXISTS `cultureisland`.`liked_shows` ;
 
 CREATE TABLE IF NOT EXISTS `cultureisland`.`liked_shows` (
-                                                      `id` INT NOT NULL AUTO_INCREMENT,
-                                                      `member_id` INT NOT NULL,
-                                                      `culture_title` VARCHAR(64) NOT NULL,
-    `culture_date` VARCHAR(32) NOT NULL,
+                                                             `id` INT NOT NULL AUTO_INCREMENT,
+                                                             `member_id` INT NOT NULL,
+                                                             `culture_codename` VARCHAR(255) NOT NULL,
+    `culture_title` VARCHAR(255) NOT NULL,
+    `culture_date` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `fk_like_member_idx` (`member_id` ASC) VISIBLE,
     INDEX `fk_like_culture1_idx` (`culture_title` ASC, `culture_date` ASC) VISIBLE,
@@ -78,11 +79,12 @@ CREATE TABLE IF NOT EXISTS `cultureisland`.`liked_shows` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
     CONSTRAINT `fk_like_culture1`
-    FOREIGN KEY (`culture_title` , `culture_date`)
-    REFERENCES `cultureisland`.`culture` (`title` , `date`)
+    FOREIGN KEY (`culture_title`, `culture_date`)
+    REFERENCES `cultureisland`.`culture` (`title`, `date`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-    ENGINE = InnoDB;
+    ON UPDATE NO ACTION
+    ) ENGINE = InnoDB;
+
 
 
 -- -----------------------------------------------------

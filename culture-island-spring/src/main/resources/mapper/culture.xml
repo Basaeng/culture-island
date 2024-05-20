@@ -13,4 +13,12 @@
         VALUES (#{title}, #{date}, #{codename}, #{guname}, #{place}, #{useTrgt}, #{useFee}, #{startDate}, #{log}, #{lat}, #{isFree}, #{hmpgAddr}, #{score})
     </insert>
 
+    <select id="checkLikeExists" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM liked_shows WHERE member_id = #{memberId} AND culture_codename = #{cultureCodename} AND culture_title = #{cultureTitle} AND culture_date = #{cultureDate}
+    </select>
+
+    <insert id="addLike">
+        INSERT INTO liked_shows (member_id, culture_codename, culture_title, culture_date)
+        VALUES (#{memberId}, #{cultureCodename}, #{cultureTitle}, #{cultureDate})
+    </insert>
 </mapper>
