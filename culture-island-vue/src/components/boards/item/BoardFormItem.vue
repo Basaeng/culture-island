@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { registArticle, getModifyArticle, modifyArticle } from "@/api/board";
+import { registArticle, getModifyArticle, modifyArticle, detailArticle } from "@/api/board";
 
 const router = useRouter();
 const route = useRoute();
@@ -23,9 +23,10 @@ const article = ref({
 if (props.type === "modify") {
   let { articleno } = route.params;
   console.log(articleno + "번글 얻어와서 수정할거야");
-  getModifyArticle(
+  detailArticle(
     articleno,
     ({ data }) => {
+      console.log("data : " + data);
       article.value = data;
       isUseId.value = true;
     },
@@ -149,31 +150,37 @@ function writeArticle() {
       modalSubTitle.value = "글을 작성하였어요, 목록으로 돌아갈까요?"
     },
     (error) => {
-      console.log(error);
       modalStatus.value = "error"
       modalTitle.value = "작성 실패"
       modalSubTitle.value = "글을 작성하는데 실패했어요, 목록으로 돌아갈까요?"
+      console.log(error);
     }
   );
 }
 
 function updateArticle() {
   console.log(article.value.articleNo + "번글 수정하자!!", article.value);
+  article.value.name = "ssafy"; // 더미
   open.value = true;
   modifyArticle(
     article.value,
     (response) => {
       modalStatus.value = "success"
-      modalTitle.value = "작성 완료"
-      modalSubTitle.value = "글을 작성하였어요, 목록으로 돌아갈까요?"
+      modalTitle.value = "수정 완료"
+      modalSubTitle.value = "글을 수정하였어요, 목록으로 돌아갈까요?"
     },
     (error) => {
       console.log(error);
       modalStatus.value = "error"
-      modalTitle.value = "작성 실패"
-      modalSubTitle.value = "글을 작성하는데 실패했어요, 목록으로 돌아갈까요?"
+      modalTitle.value = "수정 실패"
+      modalSubTitle.value = "글을 수정하는데 실패했어요, 목록으로 돌아갈까요?"
     }
   );
+  // if (modalStatus.value = "") {
+  //     modalStatus.value = "error"
+  //     modalTitle.value = "수정 실패"
+  //     modalSubTitle.value = "글을 수정하는데 실패했어요, 목록으로 돌아갈까요?"
+  // }
 }
 
 function moveList() {
@@ -241,22 +248,12 @@ function moveList() {
   </form>
   <div>
     <a-modal v-model:open="open" title="" :confirm-loading="confirmLoading" @ok="handleOk">
-      <!-- <div v-if="httpRequest"> -->
         <a-result
           :status="`${modalStatus}`"
           :title="`${modalTitle}`"
           :sub-title="`${modalSubTitle}`"
         >
         </a-result>
-      <!-- </div> -->
-      <!-- <div v-if="!httpRequest">
-        <a-result
-          status="error"
-          title="작성 실패"
-          sub-title="글을 작성하는데 실패했어요, 목록으로 돌아갈까요?"
-        >
-        </a-result>
-      </div> -->
     </a-modal>
   </div>
 </template>
