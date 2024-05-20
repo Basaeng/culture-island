@@ -1,11 +1,13 @@
 <script setup>
 import CommentDetailItem from "@/components/boards/comments/CommentDetailItem.vue";
-import { ref, onMounted } from "vue";
+import { h, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { detailArticle, deleteArticle } from "@/api/board";
 import { listComment, registComment } from "@/api/comment";
-import { UserOutlined } from "@ant-design/icons-vue";
-import { Axios } from '@/util/http-common';
+import { UserOutlined, WarningOutlined } from "@ant-design/icons-vue";
+import { notification } from "ant-design-vue";
+import { Axios } from "@/util/http-common";
+
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -31,20 +33,23 @@ onMounted(() => {
   getComments();
 });
 
-const member = ref({})
+const member = ref({});
 
 const getMemberDetails = () => {
-  http.get(`member/me`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt')}`
-    }
-  }).then(({data})=>{
+  http
+    .get(`member/me`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    })
+    .then(({ data }) => {
       member.value = data;
       // console.log("member : " + member.value.id)
-  }).catch ((error)=>{
-    console.error('Failed to fetch user details', error);
-  })
-}
+    })
+    .catch((error) => {
+      console.error("Failed to fetch user details", error);
+    });
+};
 
 const getArticle = () => {
   // const { articleno } = route.params;
@@ -89,13 +94,14 @@ const commentSubmit = () => {
       depth: "",
       comment: value.value,
       articleNo: article.value.articleNo,
-      name: "ssafy", // 댓글 작성자 이름
-      memberNo: 1, // 댓글 작성자 고유 번호
+      name: member.value.name, // 댓글 작성자 이름
+      memberNo: member.value.id, // 댓글 작성자 고유 번호
     };
 
     registComment(
       comment.value,
       (response) => {
+        value.value = "";
         console.log("댓글 작성 완료");
         getComments();
       },
@@ -127,6 +133,24 @@ function onDeleteArticle() {
     }
   );
 }
+
+const [api, contextHolder] = notification.useNotification();
+const open = (placement) => openNotification(placement);
+const openNotification = (placement) => {
+  if (member.value != "") {
+    commentSubmit();
+  } else {
+    api.info({
+      message: `로그인 필요`,
+      description: "로그인이 필요한 기능입니다 로그인을 해주세요",
+      placement,
+      icon: () =>
+        h(WarningOutlined, {
+          style: "color: #920101",
+        }),
+    });
+  }
+};
 </script>
 
 <template>
@@ -156,18 +180,12 @@ function onDeleteArticle() {
           <div class="text-center">
             {{ article.content }}
           </div>
-          <div class="divider mt-3 mb-3"></div>
+          <div class="divider mt-3 mb-3 ms-1"></div>
           <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-primary mb-3" @click="moveList">
-              글목록
-            </button>
+            <a-button type="primary" class="mb-3 ms-1" @click="moveList">글목록</a-button>
             <div v-if="member.id == article.memberId">
-              <button type="button" class="btn btn-outline-success mb-3 ms-1" @click="moveModify">
-                글수정
-              </button>
-              <button type="button" class="btn btn-outline-danger mb-3 ms-1" @click="onDeleteArticle">
-                글삭제
-              </button>
+              <a-button type="primary" class="mb-3 ms-1" @click="moveModify">글수정</a-button>
+              <a-button danger class="mb-3 ms-1" @click="onDeleteArticle">글삭제</a-button>
             </div>
           </div>
         </div>
@@ -191,14 +209,26 @@ function onDeleteArticle() {
                   <a-textarea v-model:value="value" :rows="4" />
                 </a-form-item>
                 <a-form-item>
-                  <a-button
+                  <!-- <a-button
                     html-type="submit"
                     :loading="submitting"
                     type="primary"
                     @click="commentSubmit"
                   >
                     댓글 작성
-                  </a-button>
+                  </a-button> -->
+                  <a-space>
+                    <a-button
+                      html-type="submit"
+                      :loading="submitting"
+                      type="primary"
+                      @click="() => open('topLeft')"
+                    >
+                      <RadiusUpleftOutlined />
+                      댓글 작성
+                    </a-button>
+                  </a-space>
+                  <contextHolder />
                 </a-form-item>
               </template>
             </a-comment>
