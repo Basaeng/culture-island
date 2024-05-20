@@ -154,20 +154,8 @@ const openNotification = (placement) => {
           :total="totalPage * 10"
           @change="onPageChange"
         />
-        <!-- <PageNavigation
-          :current-page="currentPage"
-          :total-page="totalPage"
-          @pageChange="onPageChange"
-        ></PageNavigation> -->
       </div>
       <div class="col-1">
-        <!-- <button
-          type="button"
-          class="btn btn-outline-primary btn-sm island_button_style"
-          @click="moveWrite"
-        >
-          글쓰기
-        </button> -->
         <a-space>
           <a-button type="primary" @click="() => open('topLeft')">
             <RadiusUpleftOutlined />
