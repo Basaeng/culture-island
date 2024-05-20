@@ -1,21 +1,41 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { registArticle, getModifyArticle, modifyArticle, detailArticle } from "@/api/board";
+import { registArticle, modifyArticle, detailArticle } from "@/api/board";
+import { Axios } from "@/util/http-common";
+
+onMounted(() => {
+  getMemberDetails();
+});
+
+const http = Axios();
+const member = ref({});
+
+const getMemberDetails = () => {
+  http.get(`member/me`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`
+    }
+  }).then(({data})=>{
+      member.value = data;
+      console.log("member : " + member.value.id + " " + member.value.name)
+  }).catch ((error)=>{
+    console.error('Failed to fetch user details', error);
+  });
+};
 
 const router = useRouter();
 const route = useRoute();
 
-const props = defineProps({ type: String });
+const props = defineProps({ type: String, member:Object });
 
 const isUseId = ref(false);
 
 const article = ref({
-  // articleNo: 0,
   subject: "",
   content: "",
   name: "",
-  memberId: 1, // dummy data
+  memberId: "", 
   type: "",
   pay: "",
 });
@@ -123,8 +143,8 @@ const handleOk = () => {
 };
 
 function onSubmit() {
-  // event.preventDefault();
-
+  article.value.name = member.value.name;
+  article.value.memberId = member.value.id;
   if (subjectErrMsg.value) {
     alert(subjectErrMsg.value);
   } else if (contentErrMsg.value) {
@@ -140,7 +160,6 @@ const modalSubTitle = ref("");
 
 function writeArticle() {
   console.log("글등록하자!!", article.value);
-  article.value.name = "ssafy"; // 더미
   open.value = true;
   registArticle(
     article.value,
@@ -160,7 +179,6 @@ function writeArticle() {
 
 function updateArticle() {
   console.log(article.value.articleNo + "번글 수정하자!!", article.value);
-  article.value.name = "ssafy"; // 더미
   open.value = true;
   modifyArticle(
     article.value,
@@ -176,11 +194,6 @@ function updateArticle() {
       modalSubTitle.value = "글을 수정하는데 실패했어요, 목록으로 돌아갈까요?"
     }
   );
-  // if (modalStatus.value = "") {
-  //     modalStatus.value = "error"
-  //     modalTitle.value = "수정 실패"
-  //     modalSubTitle.value = "글을 수정하는데 실패했어요, 목록으로 돌아갈까요?"
-  // }
 }
 
 function moveList() {
