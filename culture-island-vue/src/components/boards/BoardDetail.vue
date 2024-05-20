@@ -180,22 +180,12 @@ const openNotification = (placement) => {
           <div class="text-center">
             {{ article.content }}
           </div>
-          <div class="divider mt-3 mb-3"></div>
+          <div class="divider mt-3 mb-3 ms-1"></div>
           <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-primary mb-3" @click="moveList">
-              글목록
-            </button>
+            <a-button type="primary" class="mb-3 ms-1" @click="moveList">글목록</a-button>
             <div v-if="member.id == article.memberId">
-              <button type="button" class="btn btn-outline-success mb-3 ms-1" @click="moveModify">
-                글수정
-              </button>
-              <button
-                type="button"
-                class="btn btn-outline-danger mb-3 ms-1"
-                @click="onDeleteArticle"
-              >
-                글삭제
-              </button>
+              <a-button type="primary" class="mb-3 ms-1" @click="moveModify">글수정</a-button>
+              <a-button danger class="mb-3 ms-1" @click="onDeleteArticle">글삭제</a-button>
             </div>
           </div>
         </div>
