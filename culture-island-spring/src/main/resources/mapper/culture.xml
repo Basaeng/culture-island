@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.cultureisland.culture.model.CultureMapper">
+
+    <select id="checkCultureExists" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM culture WHERE codename = #{codename} AND title = #{title} AND date = #{date}
+    </select>
+
+    <insert id="addCulture" parameterType="com.ssafy.cultureisland.culture.model.CultureDTO">
+        INSERT INTO culture (title, date, codename, guname, place, use_trgt, use_fee, start_date, log, lat, is_free, hmpg_addr, score)
+        VALUES (#{title}, #{date}, #{codename}, #{guname}, #{place}, #{useTrgt}, #{useFee}, #{startDate}, #{log}, #{lat}, #{isFree}, #{hmpgAddr}, #{score})
+    </insert>
+
+    <select id="checkLikeExists" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM liked_shows WHERE member_id = #{memberId} AND culture_codename = #{cultureCodename} AND culture_title = #{cultureTitle} AND culture_date = #{cultureDate}
+    </select>
+
+    <insert id="addLike">
+        INSERT INTO liked_shows (member_id, culture_codename, culture_title, culture_date)
+        VALUES (#{memberId}, #{cultureCodename}, #{cultureTitle}, #{cultureDate})
+    </insert>
+</mapper>

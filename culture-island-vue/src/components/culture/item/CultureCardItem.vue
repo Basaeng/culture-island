@@ -45,24 +45,16 @@ const moveDetail = (item) => {
 </script>
 
 <template>
-  <a-card hoverable style="width: 300px; margin: 10px" @click="moveDetail(item)">
+  <a-card hoverable style="width: 200px; margin: 10px" @click="moveDetail(item)">
     <template #cover>
       <img alt="example" :src="item.MAIN_IMG" />
     </template>
     <a-card-meta :title="item.TITLE">
-      <template #avatar>
-        <a-avatar>
-          <template #icon>
-            <UserOutlined />
-          </template>
-        </a-avatar>
-        <!-- <a-avatar src="https://joeschmoe.io/api/v1/random" /> -->
-      </template>
       <template #description>
-        <div class="row">
-          <div class="col">위치: {{ item.GUNAME }} {{ item.PLACE }}</div>
-          <div class="col">공연 기간 : {{ item.DATE }}</div>
-        </div>
+        <div class="col">위치: {{ item.GUNAME }} {{ item.PLACE }}</div>
+        <br />
+        <div class="col">공연 기간 : {{ item.DATE }}</div>
+        <div class="row"></div>
       </template>
     </a-card-meta>
   </a-card>

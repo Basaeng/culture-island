@@ -126,7 +126,7 @@ const onPageChange = (val) => {
 </script>
 
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid mt-3">
     <div class="row">
       <div class="col">
         <div class="row align-self-center mb-2">
@@ -144,8 +144,8 @@ const onPageChange = (val) => {
             </form>
           </div>
         </div>
-        <div class="row">
-          <div v-if="noDataMessage" class="col">
+        <div class="row d-flex justify-content-end">
+          <div v-if="noDataMessage" class="col d-flex justify-content-center" >
             <p>{{ noDataMessage }}</p>
           </div>
             <CultureCardItem v-for="(item, index) in items" :key="index" :item="item">
@@ -155,17 +155,20 @@ const onPageChange = (val) => {
       </div>
     </div>
     <div class="row bottom">
-      <div class="col">
-        <PageNavigation
+      <div class="col text-center">
+        <a-pagination
+          v-model:current="currentPage"
+          :total="totalPage * 10"
+          @change="onPageChange"
+        />
+        <!-- <PageNavigation
           :current-page="currentPage"
           :total-page="totalPage"
           @pageChange="onPageChange"
-        ></PageNavigation>
+        ></PageNavigation> -->
       </div>
       <div class="col-1">
-        <button type="button" class="btn btn-outline-primary btn-sm">
-          글쓰기
-        </button>
+
       </div>
     </div>
   </div>
