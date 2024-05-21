@@ -138,7 +138,7 @@ const openNotification = (placement) => {
             >
               <template #icon><smile-outlined /></template>
               <template #action>
-                <a-button size="small" danger @click="moveWrite">글쓰러 가기</a-button>
+                <a-button size="small" danger @click="() => open('topLeft')">글쓰러 가기</a-button>
               </template>
             </a-alert>
           </div>

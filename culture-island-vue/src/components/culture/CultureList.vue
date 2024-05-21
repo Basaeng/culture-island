@@ -21,8 +21,8 @@ const items = ref([]);
 const currentPage = ref(parseInt(route.params.pageno) || 1);
 const totalPage = ref(0);
 const noDataMessage = ref("");
-const isLoading = ref(true);  // 로딩 상태를 위한 변수 추가
-const isSearchLoading = ref(false);  // 검색 로딩 상태를 위한 변수 추가
+const isLoading = ref(true); // 로딩 상태를 위한 변수 추가
+const isSearchLoading = ref(false); // 검색 로딩 상태를 위한 변수 추가
 
 const param = ref({
   pgno: currentPage.value,
@@ -43,22 +43,28 @@ onMounted(() => {
   fetchCultureList();
 });
 
-watch(() => route.params.pageno, (newPageno) => {
-  currentPage.value = parseInt(newPageno) || 1;
-  param.value.pgno = currentPage.value;
-  fetchCultureList();
-});
+watch(
+  () => route.params.pageno,
+  (newPageno) => {
+    currentPage.value = parseInt(newPageno) || 1;
+    param.value.pgno = currentPage.value;
+    fetchCultureList();
+  }
+);
 
-watch(() => props.selectedType, (newType) => {
-  param.value.type = newType || "all";
-  fetchCultureList();
-});
+watch(
+  () => props.selectedType,
+  (newType) => {
+    param.value.type = newType || "all";
+    fetchCultureList();
+  }
+);
 
 const fetchCultureList = async () => {
   isLoading.value = true;
   const pageno = param.value.pgno;
   const pagesize = parseInt(VITE_ARTICLE_LIST_SIZE) || 10;
-  const start = 1 + ((pageno - 1) * pagesize);
+  const start = 1 + (pageno - 1) * pagesize;
   const end = pageno * pagesize;
   const type = param.value.type !== "all" ? param.value.type : "%20";
   const word = param.value.word || "%20";
@@ -88,7 +94,10 @@ const searchCultureList = async () => {
   isSearchLoading.value = true;
   param.value.pgno = 1;
   currentPage.value = 1;
-  router.push({ name: "culturelist", params: { pageno: 1, type: param.value.type, word: param.value.word } });
+  router.push({
+    name: "culturelist",
+    params: { pageno: 1, type: param.value.type, word: param.value.word },
+  });
   await fetchCultureList();
   isSearchLoading.value = false;
 };
@@ -96,10 +105,12 @@ const searchCultureList = async () => {
 const onPageChange = (val) => {
   currentPage.value = val;
   param.value.pgno = val;
-  router.push({ name: "culturelist", params: { pageno: val, type: param.value.type, word: param.value.word } });
+  router.push({
+    name: "culturelist",
+    params: { pageno: val, type: param.value.type, word: param.value.word },
+  });
   fetchCultureList();
 };
-
 </script>
 
 <template>
@@ -118,7 +129,9 @@ const onPageChange = (val) => {
                     placeholder="검색어..."
                     @keyup.enter="searchCultureList"
                   />
-                  <button class="btn btn-dark" type="button" @click="searchCultureList">검색</button>
+                  <button class="btn btn-dark" type="button" @click="searchCultureList">
+                    검색
+                  </button>
                 </div>
               </form>
             </div>
