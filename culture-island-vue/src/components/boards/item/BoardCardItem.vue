@@ -1,4 +1,5 @@
 <script setup>
+import { UserOutlined } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
 defineProps({ article: Object });
 
