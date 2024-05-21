@@ -38,6 +38,7 @@
         <if test="memberId != null">
             AND member_id = #{memberId}
         </if>
+        ORDER BY register_time DESC
         LIMIT #{start}, #{listSize}
     </select>
 
