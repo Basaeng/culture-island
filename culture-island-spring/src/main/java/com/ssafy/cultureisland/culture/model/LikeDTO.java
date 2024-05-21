@@ -13,4 +13,5 @@ public class LikeDTO {
     private String cultureTitle;
     private String cultureDate;
     private String cultureCodename;
+    private String mainImg;
 }

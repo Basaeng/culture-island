@@ -30,12 +30,12 @@
     </select>
 
     <insert id="addLike">
-        INSERT INTO liked_shows (member_id, culture_codename, culture_title, culture_date)
-        VALUES (#{memberId}, #{cultureCodename}, #{cultureTitle}, #{cultureDate})
+        INSERT INTO liked_shows (member_id, culture_codename, culture_title, culture_date, main_img)
+        VALUES (#{memberId}, #{cultureCodename}, #{cultureTitle}, #{cultureDate}, #{mainImg})
     </insert>
 
     <select id="getLikeByMemberId" parameterType="string" resultType="com.ssafy.cultureisland.culture.model.LikeDTO">
-        SELECT id, member_id AS memberId, culture_title AS cultureTitle, culture_date AS cultureDate, culture_codename AS cultureCodename
+        SELECT id, member_id AS memberId, culture_title AS cultureTitle, culture_date AS cultureDate, culture_codename AS cultureCodename, main_img AS mainImg
         FROM liked_shows
         WHERE member_id = #{memberId}
     </select>

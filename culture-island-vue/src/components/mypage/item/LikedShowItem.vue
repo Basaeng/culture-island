@@ -1,6 +1,7 @@
 <script setup>
+import { onMounted } from "vue";
 import { useRouter } from "vue-router";
-defineProps({ likedShow: Object });
+const props = defineProps({ likedShow: Object });
 
 const router = useRouter();
 
@@ -31,6 +32,11 @@ const moveDetail = (item) => {
     },
   });
 };
+
+onMounted(() => {
+  console.log(props.likedShow)
+})
+
 </script>
 
 <template>
@@ -38,7 +44,7 @@ const moveDetail = (item) => {
     <template #cover>
       <img
         alt="example"
-        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+        :src="likedShow.mainImg"
       />
     </template>
     <a-card-meta :title="likedShow.cultureTitle">

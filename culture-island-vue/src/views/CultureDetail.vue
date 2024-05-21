@@ -165,6 +165,7 @@ const addLike = () => {
       cultureCodename: CODENAME,
       cultureTitle: TITLE,
       cultureDate: DATE,
+      mainImg: itemData.value.MAIN_IMG
     };
     serverhttp
       .get(`/culture/check_like/${member.value.id}/${CODENAME}/${TITLE}/${DATE}`)

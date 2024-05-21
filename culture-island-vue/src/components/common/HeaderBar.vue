@@ -136,7 +136,9 @@ const moveToMyPage = () => {
           </li>
           <button v-if="!isAuthenticated" class="btn island_button_style" type="button" @click="moveToRegisterPage">회원가입</button>
           <!-- <button v-if="isAuthenticated" class="btn island_button_style" type="button" @click="moveToMyPage">마이페이지</button> -->
-          <button v-if="isAuthenticated" class="btn island_button_style" type="button"><router-link class="island_button_style" :to="{name: 'mypage'}">마이페이지</router-link></button>
+          <button v-if="isAuthenticated" class="btn island_button_style" type="button" @click="moveToMyPage">
+           마이페이지
+          </button>
         </ul>
       </div>
     </div>

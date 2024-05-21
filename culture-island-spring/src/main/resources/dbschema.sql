@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `cultureisland`.`liked_shows` (
                                                              `culture_codename` VARCHAR(255) NOT NULL,
     `culture_title` VARCHAR(255) NOT NULL,
     `culture_date` VARCHAR(255) NOT NULL,
+    `main_img` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `fk_like_member_idx` (`member_id` ASC) VISIBLE,
     INDEX `fk_like_culture1_idx` (`culture_title` ASC, `culture_date` ASC) VISIBLE,
