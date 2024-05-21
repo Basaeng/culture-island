@@ -3,9 +3,8 @@ import { h, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { listArticle } from "@/api/board.js";
 import { Axios } from "@/util/http-common";
-import { RadiusUpleftOutlined, SmileOutlined, WarningOutlined } from "@ant-design/icons-vue";
+import { WarningOutlined, RadiusUpleftOutlined } from "@ant-design/icons-vue";
 import { Empty, notification } from "ant-design-vue";
-
 
 import BoardSideNavigation from "./item/BoardSideNavigation.vue";
 import BoardCardItem from "./item/BoardCardItem.vue";
@@ -34,7 +33,7 @@ onMounted(() => {
 });
 
 const http = Axios();
-const member = ref({});
+const member = ref("");
 
 const getMemberDetails = () => {
   http
@@ -88,6 +87,7 @@ const moveWrite = () => {
 const [api, contextHolder] = notification.useNotification();
 const open = (placement) => openNotification(placement);
 const openNotification = (placement) => {
+  console.log("memer : " + member.value.id);
   if (member.value != "") {
     moveWrite();
   } else {
