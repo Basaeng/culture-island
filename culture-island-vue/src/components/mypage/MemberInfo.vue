@@ -4,11 +4,13 @@ import { useAuthStore } from '@/stores/auth';
 import { Axios } from '@/util/http-common';
 import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore()
 const { isAuthenticated } = storeToRefs(authStore)
 const http = Axios()
 const member = ref(null)
+const router = useRouter()
 
 const getMemberDetails = () => {
   http.get(`member/me`, {
@@ -18,7 +20,10 @@ const getMemberDetails = () => {
   }).then(({data})=>{
       member.value = data;
       console.log(data)
-  }).catch ((error)=>{
+  }).catch((error) => {
+    authStore.clearToken();
+      alert("잘못된 접근이거나 토큰이 만료되었습니다.")
+    router.push({name: "home"})
     console.error('Failed to fetch user details', error);
   })
 }
@@ -28,6 +33,9 @@ onMounted(() => {
   if (isAuthenticated.value) {
     getMemberDetails();
   } else {
+    authStore.clearToken();
+      alert("로그인을 하지 않았거나 토큰이 만료되었습니다.")
+    router.push({name: "home"})
     console.error('User is not authenticated');
   }
 });

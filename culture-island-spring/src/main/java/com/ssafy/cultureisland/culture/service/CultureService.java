@@ -3,7 +3,10 @@ package com.ssafy.cultureisland.culture.service;
 import com.ssafy.cultureisland.culture.model.CultureDTO;
 import com.ssafy.cultureisland.culture.model.CultureMapper;
 import com.ssafy.cultureisland.culture.model.LikeDTO;
+import com.ssafy.cultureisland.culture.model.LikeResponseDTO;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CultureService {
@@ -22,11 +25,19 @@ public class CultureService {
         cultureMapper.addCulture(culture);
     }
 
-    public boolean checkLikeExists(String memberId, String codename, String title, String date) {
+    public LikeResponseDTO checkLikeExists(String memberId, String codename, String title, String date) {
         return cultureMapper.checkLikeExists(memberId, codename, title, date);
     }
 
     public void addLikeByMemberId(LikeDTO like) {
         cultureMapper.addLike(like);
+    }
+
+    public List<LikeDTO> getLikeByMemberId(String memberId) {
+        return cultureMapper.getLikeByMemberId(memberId);
+    }
+
+    public void deleteLikeByMemberId(String memberId) {
+        cultureMapper.deleteLikeByMemberId(memberId);
     }
 }
