@@ -34,32 +34,50 @@ const moveDetail = (item) => {
 };
 
 onMounted(() => {
-  console.log(props.likedShow)
-})
-
+  console.log(props.likedShow);
+});
 </script>
 
 <template>
-  <a-card hoverable style="width: 300px; margin: 10px" @click="moveDetail(likedShow)">
-    <template #cover>
-      <img
-        alt="example"
-        :src="likedShow.mainImg"
-      />
-    </template>
-    <a-card-meta :title="likedShow.cultureTitle">
-      <template #avatar>
-        <a-avatar src="@/assets/filledheart.png" />
-        <!-- <a-avatar src="https://joeschmoe.io/api/v1/random" /> -->
-      </template>
-      <template #description>
-        <div class="col">분류: {{ likedShow.cultureCodename }}</div>
-        <br />
-        <div class="col">공연 기간 : {{ likedShow.cultureDate }}</div>
-        <div class="row"></div>
-      </template>
-    </a-card-meta>
+  <a-card hoverable style="width: 300px; margin: 10px" @click="moveDetail(props.likedShow)">
+    <div class="card-content">
+      <div class="image-container">
+        <img
+          alt="example"
+          :src="props.likedShow.mainImg"
+          class="cover-image"
+        />
+      </div>
+      <a-card-meta :title="props.likedShow.cultureTitle" class="meta-content">
+
+        <template #description>
+          <div class="col">분류: {{ props.likedShow.cultureCodename }}</div>
+          <br />
+          <div class="col">공연 기간 : {{ props.likedShow.cultureDate }}</div>
+          <div class="row"></div>
+        </template>
+      </a-card-meta>
+    </div>
   </a-card>
 </template>
 
-<style scoped></style>
+<style scoped>
+.card-content {
+  display: flex;
+  align-items: center;
+}
+
+.image-container {
+  flex: 0 0 auto;
+}
+
+.cover-image {
+  width: 100px;
+  height: auto;
+}
+
+.meta-content {
+  flex: 1;
+  padding-left: 10px;
+}
+</style>

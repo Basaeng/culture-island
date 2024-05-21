@@ -32,7 +32,7 @@ openai.apiKey = VITE_OPENAI_API_KEY;
 
 async function main() {
   const completion = await openai.chat.completions.create({
-    messages: [{ role: "user", content: "안녕?" }],
+    messages: [{ role: "user", content: `${itemData.value.TITLE}에 대해서 설명해줘 모른다면 검색해줘` }],
     model: "gpt-3.5-turbo",
   });
 
