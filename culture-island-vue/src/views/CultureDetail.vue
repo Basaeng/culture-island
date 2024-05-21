@@ -2,11 +2,12 @@
 import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
 import { CultureAxios } from "@/util/http-culture";
-import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
+import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
 import { Spin } from "ant-design-vue";
+import OpenAI from "openai";
 
-import emptyHeart from '../assets/emptyheart.png';
-import filledHeart from '../assets/filledheart.png';
+import emptyHeart from "../assets/emptyheart.png";
+import filledHeart from "../assets/filledheart.png";
 import { Axios } from "@/util/http-common";
 
 const route = useRoute();
@@ -20,14 +21,30 @@ const http = CultureAxios();
 const items = ref([]);
 const noDataMessage = ref("");
 const itemData = ref(null);
-const isHeartFilled = ref(false);  // 하트 상태를 관리하는 ref
+const isHeartFilled = ref(false); // 하트 상태를 관리하는 ref
 const member = ref(null);
-const isLoading = ref(true);  // 로딩 상태를 위한 변수 추가
+const isLoading = ref(true); // 로딩 상태를 위한 변수 추가
+
+const { VITE_OPENAI_API_KEY } = import.meta.env;
+
+const openai = new OpenAI({ apiKey: VITE_OPENAI_API_KEY, dangerouslyAllowBrowser: true });
+openai.apiKey = VITE_OPENAI_API_KEY;
+
+async function main() {
+  const completion = await openai.chat.completions.create({
+    messages: [{ role: "user", content: "안녕?" }],
+    model: "gpt-3.5-turbo",
+  });
+
+  console.log(completion);
+  console.log("gpt : " + completion);
+}
 
 const getCultureDetail = () => {
   let apiUrl = `/1/1/${CODENAME}/${TITLE}/${DATE}`;
   console.log(apiUrl);
-  http.get(apiUrl)
+  http
+    .get(apiUrl)
     .then(({ data }) => {
       console.log(data);
       if (data.culturalEventInfo && data.culturalEventInfo.row.length > 0) {
@@ -38,64 +55,71 @@ const getCultureDetail = () => {
 
         coordinate.value = {
           lat: parseFloat(itemData.value.LOT),
-          lng: parseFloat(itemData.value.LAT)
+          lng: parseFloat(itemData.value.LAT),
         };
 
         checkIfLiked();
-
       } else {
         items.value = [];
         noDataMessage.value = data.RESULT.MESSAGE || "No data available.";
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.error("Error fetching culture list:", error);
       noDataMessage.value = "Error fetching data.";
     })
     .finally(() => {
-      isLoading.value = false;  // 데이터 로드가 완료되면 로딩 상태를 false로 설정
+      isLoading.value = false; // 데이터 로드가 완료되면 로딩 상태를 false로 설정
     });
 };
 
 const getMemberDetails = () => {
-  serverhttp.get(`member/me`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt')}`
-    }
-  }).then(({ data }) => {
-    member.value = data;
-    console.log(data);
-    getCultureDetail();
-  }).catch((error) => {
-    console.error('Failed to fetch user details', error);
-  });
+  serverhttp
+    .get(`member/me`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    })
+    .then(({ data }) => {
+      member.value = data;
+      console.log(data);
+      getCultureDetail();
+    })
+    .catch((error) => {
+      console.error("Failed to fetch user details", error);
+    });
 };
 
 const toggleHeart = () => {
   if (!isHeartFilled.value) {
-    checkAndAddCulture().then(() => {
-      alert('관심 공연에 등록했습니다');
-      isHeartFilled.value = true;
-    }).catch(error => {
-      console.error("Error adding like:", error);
-    });
+    checkAndAddCulture()
+      .then(() => {
+        alert("관심 공연에 등록했습니다");
+        isHeartFilled.value = true;
+      })
+      .catch((error) => {
+        console.error("Error adding like:", error);
+      });
   } else {
-    removeLike().then(() => {
-      alert('관심 공연에서 제외했습니다');
-      isHeartFilled.value = false;
-    }).catch(error => {
-      console.error("Error removing like:", error);
-    });
+    removeLike()
+      .then(() => {
+        alert("관심 공연에서 제외했습니다");
+        isHeartFilled.value = false;
+      })
+      .catch((error) => {
+        console.error("Error removing like:", error);
+      });
   }
 };
 
 const checkAndAddCulture = () => {
   return new Promise((resolve, reject) => {
-    serverhttp.get(`/culture/check-culture/${CODENAME}/${TITLE}/${DATE}`)
+    serverhttp
+      .get(`/culture/check-culture/${CODENAME}/${TITLE}/${DATE}`)
       .then(({ data }) => {
         console.log(data);
         if (!data.exists) {
-          console.log('추가를 원해요');
+          console.log("추가를 원해요");
           let cultureData = {
             title: TITLE,
             date: DATE,
@@ -109,21 +133,25 @@ const checkAndAddCulture = () => {
             lat: parseFloat(itemData.value.LAT),
             isFree: itemData.value.IS_FREE,
             hmpgAddr: itemData.value.ORG_LINK,
-            score: parseFloat(itemData.value.SCORE)
+            score: parseFloat(itemData.value.SCORE),
           };
           console.log("문화데이터 전송 출력", cultureData);
-          serverhttp.post(`/culture/add-culture`, cultureData).then(() => {
-            addLike().then(resolve).catch(reject);
-            console.log("추가가 되써요");
-            resolve();
-          }).catch(error => {
-            console.log("Error adding culture data:", error);
-            reject();
-          });
+          serverhttp
+            .post(`/culture/add-culture`, cultureData)
+            .then(() => {
+              addLike().then(resolve).catch(reject);
+              console.log("추가가 되써요");
+              resolve();
+            })
+            .catch((error) => {
+              console.log("Error adding culture data:", error);
+              reject();
+            });
         } else {
           addLike().then(resolve).catch(reject);
         }
-      }).catch(error => {
+      })
+      .catch((error) => {
         console.log("Error checking culture data:", error);
         reject();
       });
@@ -131,25 +159,28 @@ const checkAndAddCulture = () => {
 };
 
 const addLike = () => {
-  
   return new Promise((resolve, reject) => {
     const likeData = {
       memberId: member.value.id,
       cultureCodename: CODENAME,
       cultureTitle: TITLE,
-      cultureDate: DATE
+      cultureDate: DATE,
     };
-    serverhttp.get(`/culture/check_like/${member.value.id}/${CODENAME}/${TITLE}/${DATE}`)
-    .then(({data})=> {
-      if(!data.likeResponse.exists){
-        serverhttp.post(`/culture/like`, likeData).then(() => {
-          resolve();
-        }).catch(error => {
-          console.log("Error adding like data:", error);
-          reject();
-        });
-      }
-    }) 
+    serverhttp
+      .get(`/culture/check_like/${member.value.id}/${CODENAME}/${TITLE}/${DATE}`)
+      .then(({ data }) => {
+        if (!data.likeResponse.exists) {
+          serverhttp
+            .post(`/culture/like`, likeData)
+            .then(() => {
+              resolve();
+            })
+            .catch((error) => {
+              console.log("Error adding like data:", error);
+              reject();
+            });
+        }
+      });
   });
 };
 
@@ -159,41 +190,48 @@ const removeLike = () => {
       memberId: member.value.id,
       cultureCodename: CODENAME,
       cultureTitle: TITLE,
-      cultureDate: DATE
+      cultureDate: DATE,
     };
-    serverhttp.get(`/culture/check_like/${member.value.id}/${CODENAME}/${TITLE}/${DATE}`)
-    .then(({data})=> {
-      console.log("삭제할 데이터:", data)
-      if(data.likeResponse.exists){
-        serverhttp.delete(`/culture/like/${data.likeResponse.id}`).then(() => {
-          resolve();
-        }).catch(error => {
-          console.log("Error removing like data:", error);
-          reject();
-        });
-      }
-    }) 
+    serverhttp
+      .get(`/culture/check_like/${member.value.id}/${CODENAME}/${TITLE}/${DATE}`)
+      .then(({ data }) => {
+        console.log("삭제할 데이터:", data);
+        if (data.likeResponse.exists) {
+          serverhttp
+            .delete(`/culture/like/${data.likeResponse.id}`)
+            .then(() => {
+              resolve();
+            })
+            .catch((error) => {
+              console.log("Error removing like data:", error);
+              reject();
+            });
+        }
+      });
   });
 };
 
 const checkIfLiked = () => {
-  serverhttp.get(`/culture/check_like/${member.value.id}/${CODENAME}/${TITLE}/${DATE}`)
+  serverhttp
+    .get(`/culture/check_like/${member.value.id}/${CODENAME}/${TITLE}/${DATE}`)
     .then(({ data }) => {
-      console.log(data)
+      console.log(data);
       isHeartFilled.value = data.likeResponse.exists;
       console.log("heartstatus", isHeartFilled.value);
-    }).catch(error => {
+    })
+    .catch((error) => {
       console.error("Error checking like status:", error);
     });
-}
+};
 
 const coordinate = ref({
   lat: 37.566826,
-  lng: 126.9786567
+  lng: 126.9786567,
 });
 
 onMounted(() => {
-  getMemberDetails()
+  getMemberDetails();
+  main();
 });
 </script>
 
@@ -204,24 +242,26 @@ onMounted(() => {
         <div class="d-flex flex-column align-items-center mt-3">
           <div class="title-container d-flex align-items-center">
             <h3 class="me-3">{{ itemData.TITLE }}</h3>
-            <img 
-              :src="isHeartFilled ? filledHeart : emptyHeart" 
-              alt="하트 이미지" 
-              class="heart-img" 
+            <img
+              :src="isHeartFilled ? filledHeart : emptyHeart"
+              alt="하트 이미지"
+              class="heart-img"
               @click="toggleHeart"
-            >
+            />
           </div>
         </div>
         <div class="content mt-5 row">
           <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-center align-items-center">
-            <img :src="itemData.MAIN_IMG" alt="img" class="responsive-img">
+            <img :src="itemData.MAIN_IMG" alt="img" class="responsive-img" />
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 mt-3">
             <p>위치: {{ itemData.GUNAME }} {{ itemData.PLACE }}</p>
             <p>기간: {{ itemData.DATE }}</p>
             <p>요금: {{ itemData.USE_FEE }}</p>
             <p>대상: {{ itemData.USE_TRGT }}</p>
-            <a :href="itemData.ORG_LINK"><button class="btn island_button_style">세부 내용</button></a>
+            <a :href="itemData.ORG_LINK"
+              ><button class="btn island_button_style">세부 내용</button></a
+            >
           </div>
         </div>
         <!-- 나머지 내용 -->
@@ -252,7 +292,7 @@ onMounted(() => {
   max-width: 24px;
   max-height: 24px;
   margin-left: 8px;
-  cursor: pointer; 
+  cursor: pointer;
 }
 .island_button_style {
   background-color: #920101;
