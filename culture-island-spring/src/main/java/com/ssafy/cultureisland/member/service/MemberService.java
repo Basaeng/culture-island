@@ -1,8 +1,12 @@
 package com.ssafy.cultureisland.member.service;
 
+import com.ssafy.cultureisland.board.model.BoardDto;
 import com.ssafy.cultureisland.member.MemberDTO;
 import com.ssafy.cultureisland.member.model.MemberMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -56,4 +60,15 @@ public class MemberService implements UserDetailsService {
         return new User(member.getName(), member.getPassword(), new ArrayList<>());
     }
 
+    public String getAuthenticUsername(HttpHeaders headers) {
+        String authorizationHeader = headers.getFirst(org.springframework.http.HttpHeaders.AUTHORIZATION);
+        System.out.println("Authorization Header: " + authorizationHeader);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
+
+    public List<BoardDto> getMyArticleList(int memberId) {
+        return memberMapper.getMyArticleList(memberId);
+    }
 }

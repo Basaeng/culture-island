@@ -1,5 +1,6 @@
 package com.ssafy.cultureisland.member.model;
 
+import com.ssafy.cultureisland.board.model.BoardDto;
 import com.ssafy.cultureisland.member.MemberDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -20,4 +21,6 @@ public interface MemberMapper {
     MemberDTO findById(int id);
 
     MemberDTO findByUsername(String username);
+
+    List<BoardDto> getMyArticleList(int memberId);
 }

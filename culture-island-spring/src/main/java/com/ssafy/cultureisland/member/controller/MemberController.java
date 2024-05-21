@@ -1,5 +1,6 @@
 package com.ssafy.cultureisland.member.controller;
 
+import com.ssafy.cultureisland.board.model.BoardDto;
 import com.ssafy.cultureisland.member.AuthRequest;
 import com.ssafy.cultureisland.member.AuthResponse;
 import com.ssafy.cultureisland.member.MemberDTO;
@@ -18,6 +19,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @CrossOrigin(origins = { "*" }, maxAge = 60000)
 @RestController
 @RequestMapping(value = "/member")
@@ -51,11 +55,7 @@ public class MemberController {
 
     @GetMapping("/me")
     public ResponseEntity<?> getMemberDetails(@RequestHeader HttpHeaders headers) {
-        String authorizationHeader = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        System.out.println("Authorization Header: " + authorizationHeader);
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserName = authentication.getName();
+        String currentUserName = memberService.getAuthenticUsername(headers);
         System.out.println("currentName: "+ currentUserName);
         MemberDTO member = memberService.findByUsername(currentUserName);
         System.out.println("member: " + member);
@@ -92,6 +92,27 @@ public class MemberController {
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        }
+    }
+
+    @GetMapping("/myarticles")
+    public ResponseEntity<?> getMyArticles(@RequestHeader HttpHeaders headers) {
+
+        String currentUserName = memberService.getAuthenticUsername(headers);
+        System.out.println("currentName: "+ currentUserName);
+        MemberDTO member = memberService.findByUsername(currentUserName);
+
+        if (member == null) {
+            return new ResponseEntity<>(new ResponseDTO(), HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            List<BoardDto> articleList = memberService.getMyArticleList(member.getId());
+            System.out.println(articleList);
+            return new ResponseEntity<>(articleList, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new ResponseDTO(), HttpStatus.UNAUTHORIZED);
         }
     }
 

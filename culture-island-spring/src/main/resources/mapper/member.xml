@@ -18,6 +18,18 @@
         <result property="intro" column="intro" />
     </resultMap>
 
+    <resultMap type="com.ssafy.cultureisland.board.model.BoardDto" id="article">
+        <result column="id" property="articleNo"/>
+        <result column="member_id" property="memberId"/>
+        <result column="name" property="name"/>
+        <result column="subject" property="subject"/>
+        <result column="content" property="content"/>
+        <result column="hit" property="hit"/>
+        <result column="type" property="type"/>
+        <result column="pay" property="pay"/>
+        <result column="register_time" property="registerTime"/>
+    </resultMap>
+
     <select id="findAll" resultMap="memberResultMap">
         SELECT * FROM member;
     </select>
@@ -52,4 +64,8 @@
             intro = #{intro}
         WHERE id = #{id}
     </update>
+
+    <select id="getMyArticleList" resultMap="article" parameterType="Integer">
+        SELECT * FROM article WHERE member_id = #{memberId}
+    </select>
 </mapper>
