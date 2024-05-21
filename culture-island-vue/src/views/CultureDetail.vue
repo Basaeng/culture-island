@@ -108,7 +108,7 @@ const checkAndAddCulture = () => {
             log: parseFloat(itemData.value.LOG),
             lat: parseFloat(itemData.value.LAT),
             isFree: itemData.value.IS_FREE,
-            hmpgAddr: itemData.value.HMPG_ADDR,
+            hmpgAddr: itemData.value.ORG_LINK,
             score: parseFloat(itemData.value.SCORE)
           };
           console.log("문화데이터 전송 출력", cultureData);
@@ -216,13 +216,16 @@ onMounted(() => {
           <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-center align-items-center">
             <img :src="itemData.MAIN_IMG" alt="img" class="responsive-img">
           </div>
-          <div class="col-lg-6 col-md-6 col-sm-12">
+          <div class="col-lg-6 col-md-6 col-sm-12 mt-3">
             <p>위치: {{ itemData.GUNAME }} {{ itemData.PLACE }}</p>
-            <p>공연 기간: {{ itemData.DATE }}</p>
+            <p>기간: {{ itemData.DATE }}</p>
+            <p>요금: {{ itemData.USE_FEE }}</p>
+            <p>대상: {{ itemData.USE_TRGT }}</p>
+            <a :href="itemData.ORG_LINK"><button class="btn island_button_style">세부 내용</button></a>
           </div>
         </div>
         <!-- 나머지 내용 -->
-        <div class="mt-5">
+        <div class="mt-5 d-flex justify-content-center">
           <KakaoMap :lat="coordinate.lat" :lng="coordinate.lng" :draggable="true">
             <KakaoMapMarker :lat="coordinate.lat" :lng="coordinate.lng"></KakaoMapMarker>
           </KakaoMap>
@@ -250,5 +253,11 @@ onMounted(() => {
   max-height: 24px;
   margin-left: 8px;
   cursor: pointer; 
+}
+.island_button_style {
+  background-color: #920101;
+  color: white;
+  text-decoration-color: white;
+  text-decoration: none;
 }
 </style>

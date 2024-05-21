@@ -32,22 +32,23 @@
         </if>
     </sql>
 
-    <select id="listArticle" parameterType="map" resultMap="article">
-        select b.id, b.member_id, b.name, b.subject, b.content, b.hit, b.type, b.pay, b.register_time
-        from article b, member m
-        where b.name = m.name
-        <include refid="search"/>
-        order by b.id desc
-        limit #{start}, #{listSize}
+    <select id="listArticle" parameterType="map" resultType="BoardDto">
+        SELECT * FROM article
+        WHERE subject LIKE CONCAT('%', #{word}, '%')
+        <if test="memberId != null">
+            AND member_id = #{memberId}
+        </if>
+        LIMIT #{start}, #{listSize}
     </select>
 
     <select id="getTotalArticleCount" parameterType="map" resultType="int">
-        select count(id)
-        from article
-        <where>
-            <include refid="search"/>
-        </where>
+        SELECT COUNT(*) FROM article
+        WHERE subject LIKE CONCAT('%', #{word}, '%')
+        <if test="memberId != null">
+            AND member_id = #{memberId}
+        </if>
     </select>
+
 
     <insert id="writeArticle" parameterType="boardDto">
         insert into article (member_id, name, subject, content, hit, type, pay, register_time)

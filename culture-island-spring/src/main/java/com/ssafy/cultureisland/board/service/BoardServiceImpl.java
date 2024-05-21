@@ -42,18 +42,15 @@ public class BoardServiceImpl implements BoardService {
         }
 
         String key = map.get("key");
-//        param.put("key", key == null ? "subject" : key);
         param.put("key", "subject");
-//        if ("user_name".equals(key)) {
-//            param.put("key", "b.name");
-//        }
 
+        // 회원 ID 추가
+        String memberId = map.get("memberId");
+        if (memberId != null && !memberId.isEmpty()) {
+            param.put("memberId", memberId);
+        }
 
         List<BoardDto> list = boardMapper.listArticle(param);
-//        if ("user_id".equals(key)) {
-//            param.put("key", "name");
-//        }
-        System.out.println(list);
         int totalArticleCount = boardMapper.getTotalArticleCount(param);
         int totalPageCount = (totalArticleCount - 1) / sizePerPage + 1;
 
@@ -64,6 +61,7 @@ public class BoardServiceImpl implements BoardService {
 
         return boardListDto;
     }
+
 
     @Override
     public void writeArticle(BoardDto boardDto) throws Exception {
