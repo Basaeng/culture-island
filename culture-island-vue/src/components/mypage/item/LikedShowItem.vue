@@ -1,22 +1,11 @@
 <script setup>
-import { UserOutlined } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
-
-const props = defineProps({ item: Object, type: String });
+defineProps({ likedShow: Object });
 
 const router = useRouter();
 
-const width = ref(300);
-
-onMounted(() => {
-  if (props.type === "calendar") {
-    width.value = 150;
-  }
-});
-
 const removeSpecialChars = (str) => {
-  return str.replace(/[^a-zA-Z0-9가-힣,\s]/g, "")
+  return str.replace(/[^a-zA-Z0-9가-힣\s]/g, ""); // 특수 문자를 제거
 };
 
 const processCODENAME = (str) => {
@@ -36,24 +25,31 @@ const moveDetail = (item) => {
   router.push({
     name: "cultureview",
     params: {
-      CODENAME: removeSpecialChars(processCODENAME(item.CODENAME)),
-      TITLE: removeSpecialChars(processTITLE(item.TITLE)),
-      DATE: item.DATE,
+      CODENAME: removeSpecialChars(processCODENAME(item.cultureCodename)),
+      TITLE: removeSpecialChars(processTITLE(item.cultureTitle)),
+      DATE: item.cultureDate,
     },
   });
 };
 </script>
 
 <template>
-  <a-card hoverable style="width: 200px; margin: 10px" @click="moveDetail(item)">
+  <a-card hoverable style="width: 300px; margin: 10px" @click="moveDetail(likedShow)">
     <template #cover>
-      <img alt="example" :src="item.MAIN_IMG" />
+      <img
+        alt="example"
+        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+      />
     </template>
-    <a-card-meta :title="item.TITLE">
+    <a-card-meta :title="likedShow.cultureTitle">
+      <template #avatar>
+        <a-avatar src="@/assets/filledheart.png" />
+        <!-- <a-avatar src="https://joeschmoe.io/api/v1/random" /> -->
+      </template>
       <template #description>
-        <div class="col">위치: {{ item.GUNAME }} {{ item.PLACE }}</div>
+        <div class="col">분류: {{ likedShow.cultureCodename }}</div>
         <br />
-        <div class="col">공연 기간 : {{ item.DATE }}</div>
+        <div class="col">공연 기간 : {{ likedShow.cultureDate }}</div>
         <div class="row"></div>
       </template>
     </a-card-meta>

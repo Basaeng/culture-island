@@ -112,9 +112,9 @@ const router = createRouter({
       redirect: { name: "culturelist" },
       children: [
         {
-          path: "list/:pageno",
+          path: "list/:pageno?/:type?/:keyword?",
           name: "culturelist",
-          component: CultureList
+          component: CultureList,
         },
         {
           path: "calendar",

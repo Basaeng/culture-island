@@ -3,6 +3,7 @@ import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
 import { CultureAxios } from "@/util/http-culture";
 import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
+import { Spin } from "ant-design-vue";
 
 import emptyHeart from '../assets/emptyheart.png';
 import filledHeart from '../assets/filledheart.png';
@@ -20,7 +21,8 @@ const items = ref([]);
 const noDataMessage = ref("");
 const itemData = ref(null);
 const isHeartFilled = ref(false);  // 하트 상태를 관리하는 ref
-const member = ref(null)
+const member = ref(null);
+const isLoading = ref(true);  // 로딩 상태를 위한 변수 추가
 
 const getCultureDetail = () => {
   let apiUrl = `/1/1/${CODENAME}/${TITLE}/${DATE}`;
@@ -49,6 +51,9 @@ const getCultureDetail = () => {
     .catch(error => {
       console.error("Error fetching culture list:", error);
       noDataMessage.value = "Error fetching data.";
+    })
+    .finally(() => {
+      isLoading.value = false;  // 데이터 로드가 완료되면 로딩 상태를 false로 설정
     });
 };
 
@@ -126,6 +131,7 @@ const checkAndAddCulture = () => {
 };
 
 const addLike = () => {
+  
   return new Promise((resolve, reject) => {
     const likeData = {
       memberId: member.value.id,
@@ -192,39 +198,41 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container-fluid d-flex justify-content-center">
-    <div class="col-lg-8 col-md-8 col-sm-10 page" v-if="itemData">
-      <div class="d-flex flex-column align-items-center mt-3">
-        <div class="title-container d-flex align-items-center">
-          <h3 class="me-3">{{ itemData.TITLE }}</h3>
-          <img 
-            :src="isHeartFilled ? filledHeart : emptyHeart" 
-            alt="하트 이미지" 
-            class="heart-img" 
-            @click="toggleHeart"
-          >
+  <a-spin :spinning="isLoading" tip="불러오는 중..." size="large">
+    <div class="container-fluid d-flex justify-content-center">
+      <div class="col-lg-8 col-md-8 col-sm-10 page" v-if="itemData">
+        <div class="d-flex flex-column align-items-center mt-3">
+          <div class="title-container d-flex align-items-center">
+            <h3 class="me-3">{{ itemData.TITLE }}</h3>
+            <img 
+              :src="isHeartFilled ? filledHeart : emptyHeart" 
+              alt="하트 이미지" 
+              class="heart-img" 
+              @click="toggleHeart"
+            >
+          </div>
+        </div>
+        <div class="content mt-5 row">
+          <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-center align-items-center">
+            <img :src="itemData.MAIN_IMG" alt="img" class="responsive-img">
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-12">
+            <p>위치: {{ itemData.GUNAME }} {{ itemData.PLACE }}</p>
+            <p>공연 기간: {{ itemData.DATE }}</p>
+          </div>
+        </div>
+        <!-- 나머지 내용 -->
+        <div class="mt-5">
+          <KakaoMap :lat="coordinate.lat" :lng="coordinate.lng" :draggable="true">
+            <KakaoMapMarker :lat="coordinate.lat" :lng="coordinate.lng"></KakaoMapMarker>
+          </KakaoMap>
         </div>
       </div>
-      <div class="content mt-5 row">
-        <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-center align-items-center">
-          <img :src="itemData.MAIN_IMG" alt="img" class="responsive-img">
-        </div>
-        <div class="col-lg-6 col-md-6 col-sm-12">
-          <p>위치: {{ itemData.GUNAME }} {{ itemData.PLACE }}</p>
-          <p>공연 기간: {{ itemData.DATE }}</p>
-        </div>
-      </div>
-      <!-- 나머지 내용 -->
-      <div class="mt-5">
-        <KakaoMap :lat="coordinate.lat" :lng="coordinate.lng" :draggable="true">
-          <KakaoMapMarker :lat="coordinate.lat" :lng="coordinate.lng"></KakaoMapMarker>
-        </KakaoMap>
+      <div v-else>
+        <p>{{ noDataMessage }}</p>
       </div>
     </div>
-    <div v-else>
-      <p>{{ noDataMessage }}</p>
-    </div>
-  </div>
+  </a-spin>
 </template>
 
 <style scoped>

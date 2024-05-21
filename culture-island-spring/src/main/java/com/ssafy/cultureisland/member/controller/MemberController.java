@@ -59,6 +59,9 @@ public class MemberController {
         System.out.println("currentName: "+ currentUserName);
         MemberDTO member = memberService.findByUsername(currentUserName);
         System.out.println("member: " + member);
+        if (member == null) {
+            return new ResponseEntity<>(new ResponseDTO(), HttpStatus.UNAUTHORIZED);
+        }
         return ResponseEntity.ok(member);
     }
 

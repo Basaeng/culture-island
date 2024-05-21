@@ -1,7 +1,7 @@
 <script setup>
 import { Axios } from '@/util/http-common';
 import { onMounted, ref } from "vue";
-
+import LikedShowsItem from "@/components/mypage/item/LikedShowItem.vue"
 const http = Axios()
 const member = ref(null)
 
@@ -38,7 +38,7 @@ onMounted (() => {
 </script>
 
 <template>
-
+  <LikedShowsItem v-for="likedShow in likedShows" :key="likedShow.id" :likedShow="likedShow"/>
 </template>
 
 <style scope>
