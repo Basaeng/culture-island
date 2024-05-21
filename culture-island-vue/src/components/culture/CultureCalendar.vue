@@ -1,34 +1,51 @@
 <script setup>
 import { CultureAxios } from "@/util/http-culture";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 import CultureCardItem from "./item/CultureCardItem.vue";
 
 const { VITE_CULTURE_API_URL } = import.meta.env;
 
+const props = defineProps({
+  selectedType: {
+    type: String,
+    default: null,
+  },
+});
+
 const http = CultureAxios();
 
 const value = ref();
 const events = ref([]);
-const selectedEvents = ref([]);
+const selectedEventData = ref([]);
+
+const eventDate = ref("");
+const eventType = ref("%20");
 
 const spinning = ref(true);
 const selectedSpinning = ref(false);
 
 onMounted(() => {
-  const date = nowMonth();
-  getEventList(date);
+  eventDate.value = nowYear();
+  getEventList("", eventDate.value);
 });
 
-const getEventList = async (date) => {
-  await http.get(`0/900/%20/%20/${date}`).then(({ data }) => {
-    events.value = data.culturalEventInfo.row;
-  });
+const getEventList = async (type, date) => {
+  spinning.value = true;
+  await http
+    .get(`0/999/${type}/%20/${date}`)
+    .then(({ data }) => {
+      events.value = data.culturalEventInfo.row;
+    })
+    .catch((error) => {
+      events.value = "";
+      console.log(error);
+    });
   spinning.value = false;
 };
 
-const nowMonth = () => {
+const nowYear = () => {
   const today = new Date();
 
   const year = today.getFullYear();
@@ -36,9 +53,17 @@ const nowMonth = () => {
 
   // const dateStr = year + "-" + month;
   // const dateStr = year;
-  const dateStr = "20";
+  const dateStr = "";
   return dateStr;
 };
+
+watch(
+  () => props.selectedType,
+  (newType) => {
+    eventType.value = newType;
+    getEventList(eventType.value, eventDate.value);
+  }
+);
 
 const onPanelChange = (value, mode) => {
   console.log("판넬 : " + value, mode);
@@ -47,13 +72,15 @@ const onPanelChange = (value, mode) => {
 const onSelectDate = async (date) => {
   selectedSpinning.value = true;
   const dateString = date.format("YYYY-MM-DD");
+  console.log(eventType.value + " " + dateString);
   await http
-    .get(`/0/900/%20/%20/${dateString}`)
+    .get(`0/999/${eventType.value}/%20/${dateString}`)
     .then(({ data }) => {
       console.log(data.culturalEventInfo.row);
-      selectedEvents.value = data.culturalEventInfo.row;
+      selectedEventData.value = data.culturalEventInfo.row;
     })
     .catch((error) => {
+      selectedEventData.value = "";
       console.log(error);
     });
 
@@ -62,8 +89,18 @@ const onSelectDate = async (date) => {
 
 const getListData = (value) => {
   const day = value.date();
+  const month = value.month();
+  const year = value.year();
+
   const listData = events.value
-    .filter((event) => new Date(event.STRTDATE).getDate() === day)
+    .filter((event) => {
+      const eventDate = new Date(event.STRTDATE);
+      return (
+        eventDate.getDate() === day &&
+        eventDate.getMonth() === month && // 0-based
+        eventDate.getFullYear() === year
+      );
+    })
     .map((event) => ({
       type: event.IS_FREE === "무료" ? "success" : "warning",
       content: event.TITLE,
@@ -71,6 +108,7 @@ const getListData = (value) => {
 
   return listData;
 };
+
 const getMonthData = (value) => {
   if (value.month() === 8) {
     return 1394;
@@ -93,10 +131,10 @@ const getMonthData = (value) => {
   <a-spin :spinning="selectedSpinning" tip="불러오는중..." size="large" class="mt-5 pt-5">
     <div class="row">
       <CultureCardItem
-        v-for="(event, index) in selectedEvents"
+        v-for="(item, index) in selectedEventData"
         :key="index"
         type="calendar"
-        :item="event"
+        :item="item"
       />
     </div>
   </a-spin>
