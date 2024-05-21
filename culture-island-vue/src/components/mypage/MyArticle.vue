@@ -1,14 +1,12 @@
 <script setup>
 import { h, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { listArticle } from "@/api/board.js";
 import { Axios } from "@/util/http-common";
-import { RadiusUpleftOutlined, SmileOutlined, WarningOutlined } from "@ant-design/icons-vue";
+import { WarningOutlined } from "@ant-design/icons-vue";
 import { Empty, notification } from "ant-design-vue";
 
 import BoardSideNavigation from "@/components/boards/item/BoardSideNavigation.vue";
 import BoardCardItem from "@/components/boards/item/BoardCardItem.vue";
-import BoardListItem from "@/components/boards/item/BoardListItem.vue";
 import PageNavigation from "@/components/common/PageNavigation.vue";
 
 const router = useRouter();
@@ -22,68 +20,46 @@ const param = ref({
   spp: VITE_LIST_SIZE,
   key: "",
   word: "",
-    type: "",
-  memberId: "",
+  type: "",
 });
 
 const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
 
 onMounted(() => {
-    getMemberDetails();
+  getArticleList();
 });
 
 const http = Axios();
 const member = ref({});
 
-const getMemberDetails = () => {
-  http
-    .get(`member/me`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-      },
-    })
-    .then(({ data }) => {
-        member.value = data;
-        console.log("member : " + member.value.id + " " + member.value.name);
-        param.value.memberId = member.value.id;
-        getArticleList();
-    })
-    .catch((error) => {
-      console.error("Failed to fetch user details", error);
-    });
-};
-
 const getArticleList = () => {
-    console.log("서버에서 글목록 얻어오자!!!", param.value);
-    http.get(`/board/myarticles`, {
-        params: {
-            pgno: param.value.pgno,
-            spp: param.value.spp,
-            key: param.value.key,
-            word: param.value.word,
-            type: param.value.type,
-            memberId: param.value.memberId
-        },
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem("jwt")}`
-        }
-    })
-    .then(({ data }) => {
-        console.log(data);
-        articles.value = data.articles;
-        currentPage.value = data.currentPage;
-        totalPage.value = data.totalPageCount;
-    })
-    .catch((error) => {
-        console.error("Error while getting Article", error);
-    });
+  console.log("서버에서 글목록 얻어오자!!!", param.value);
+  http.get(`/member/myarticles`, {
+    params: {
+      pgno: param.value.pgno,
+      spp: param.value.spp,
+      key: param.value.key,
+      word: param.value.word,
+      type: param.value.type,
+    },
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
+      'Content-Type': 'application/json',
+    }
+  })
+  .then(({ data }) => {
+    console.log(data);
+    articles.value = data.articles;
+    currentPage.value = data.currentPage;
+    totalPage.value = data.totalPageCount;
+  })
+  .catch((error) => {
+    console.error("Error while getting Article", error);
+  });
 };
-
 
 const selectedType = (type) => {
   param.value.type = String(type);
-  // console.log(param.value);
   getArticleList();
 };
 
@@ -101,9 +77,16 @@ const moveWrite = () => {
 const [api, contextHolder] = notification.useNotification();
 const open = (placement) => openNotification(placement);
 const openNotification = (placement) => {
-  if (member.value != "") {
+  http.get(`member/me`, {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
+    },
+  })
+  .then(({ data }) => {
+    member.value = data;
     moveWrite();
-  } else {
+  })
+  .catch((error) => {
     api.info({
       message: `로그인 필요`,
       description: "로그인이 필요한 기능입니다 로그인을 해주세요",
@@ -113,7 +96,7 @@ const openNotification = (placement) => {
           style: "color: #920101",
         }),
     });
-  }
+  });
 };
 </script>
 

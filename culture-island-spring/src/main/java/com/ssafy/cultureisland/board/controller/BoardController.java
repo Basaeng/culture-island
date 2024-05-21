@@ -33,18 +33,6 @@ public class BoardController {
         }
     }
 
-    @GetMapping("/myarticles")
-    public ResponseEntity<?> articleListById(@RequestParam Map<String, String> map) {
-        System.out.println("map:" + map);
-        try {
-            BoardListDto boardListDto = boardService.listArticle(map);
-            System.out.println("return myarticles " + boardListDto);
-            return ResponseEntity.ok().body(boardListDto);
-        } catch (Exception e) {
-            return exceptionHandling(e);
-        }
-    }
-
     @PostMapping
     public ResponseEntity<?> writeArticle(@RequestBody BoardDto boardDto) {
         try {

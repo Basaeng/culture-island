@@ -1,6 +1,8 @@
 package com.ssafy.cultureisland.member.controller;
 
 import com.ssafy.cultureisland.board.model.BoardDto;
+import com.ssafy.cultureisland.board.model.BoardListDto;
+import com.ssafy.cultureisland.board.service.BoardService;
 import com.ssafy.cultureisland.member.AuthRequest;
 import com.ssafy.cultureisland.member.AuthResponse;
 import com.ssafy.cultureisland.member.MemberDTO;
@@ -15,12 +17,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = { "*" }, maxAge = 60000)
 @RestController
@@ -28,12 +33,14 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+    private final BoardService boardService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
 
     @Autowired
-    public MemberController(MemberService memberService, AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
+    public MemberController(MemberService memberService, BoardService boardService, AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
         this.memberService = memberService;
+        this.boardService = boardService;
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
     }
@@ -63,6 +70,27 @@ public class MemberController {
             return new ResponseEntity<>(new ResponseDTO(), HttpStatus.UNAUTHORIZED);
         }
         return ResponseEntity.ok(member);
+    }
+
+    @GetMapping("/myarticles")
+    public ResponseEntity<?> articleListById(@RequestParam Map<String, String> map, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String username = userDetails.getUsername(); // JWT에서 추출된 사용자 ID
+            MemberDTO member = memberService.findByUsername(username);
+            String memberId = String.valueOf(member.getId());
+            System.out.println("memberId:" + memberId);
+            map.put("memberId", memberId);
+            BoardListDto boardListDto = boardService.listArticle(map);
+            System.out.println(boardListDto);
+            return ResponseEntity.ok().body(boardListDto);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    private ResponseEntity<?> exceptionHandling(Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(500).body("Error : " + e.getMessage());
     }
 
     @PostMapping()
@@ -95,25 +123,25 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/myarticles")
-    public ResponseEntity<?> getMyArticles(@RequestHeader HttpHeaders headers) {
-
-        String currentUserName = memberService.getAuthenticUsername(headers);
-        System.out.println("currentName: "+ currentUserName);
-        MemberDTO member = memberService.findByUsername(currentUserName);
-
-        if (member == null) {
-            return new ResponseEntity<>(new ResponseDTO(), HttpStatus.UNAUTHORIZED);
-        }
-
-        try {
-            List<BoardDto> articleList = memberService.getMyArticleList(member.getId());
-            System.out.println(articleList);
-            return new ResponseEntity<>(articleList, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(new ResponseDTO(), HttpStatus.UNAUTHORIZED);
-        }
-    }
+//    @GetMapping("/myarticles")
+//    public ResponseEntity<?> getMyArticles(@RequestHeader HttpHeaders headers) {
+//
+//        String currentUserName = memberService.getAuthenticUsername(headers);
+//        System.out.println("currentName: "+ currentUserName);
+//        MemberDTO member = memberService.findByUsername(currentUserName);
+//
+//        if (member == null) {
+//            return new ResponseEntity<>(new ResponseDTO(), HttpStatus.UNAUTHORIZED);
+//        }
+//
+//        try {
+//            List<BoardDto> articleList = memberService.getMyArticleList(member.getId());
+//            System.out.println(articleList);
+//            return new ResponseEntity<>(articleList, HttpStatus.OK);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>(new ResponseDTO(), HttpStatus.UNAUTHORIZED);
+//        }
+//    }
 
 }
