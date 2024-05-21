@@ -32,7 +32,7 @@
         </if>
     </sql>
 
-    <select id="listArticle" parameterType="map" resultType="BoardDto">
+    <select id="listArticle" parameterType="map" resultType="BoardDto" resultMap="article">
         SELECT * FROM article
         WHERE subject LIKE CONCAT('%', #{word}, '%')
         <if test="memberId != null">
