@@ -105,6 +105,7 @@ const commentSubmit = () => {
     registComment(
       comment.value,
       (response) => {
+        value.value = "";
         console.log("댓글 작성 완료");
         getComments();
       },
@@ -180,20 +181,14 @@ const openNotification = (placement) => {
           </div>
           <div class="col-md-4 align-self-center text-end">댓글 : {{ comments.length }}</div>
           <div class="divider mb-3"></div>
-          <div class="text-center">
-            {{ article.content }}
-          </div>
-          <div class="divider mt-3 mb-3"></div>
+          <div class="content" v-html="article.content"></div>
+          <div class="divider mt-3 mb-3 ms-1"></div>
           <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-primary mb-3" @click="moveList">
-              글목록
-            </button>
-            <button type="button" class="btn btn-outline-success mb-3 ms-1" @click="moveModify">
-              글수정
-            </button>
-            <button type="button" class="btn btn-outline-danger mb-3 ms-1" @click="onDeleteArticle">
-              글삭제
-            </button>
+            <a-button type="primary" class="mb-3 ms-1" @click="moveList">글목록</a-button>
+            <div v-if="member.id == article.memberId">
+              <a-button type="primary" class="mb-3 ms-1" @click="moveModify">글수정</a-button>
+              <a-button danger class="mb-3 ms-1" @click="onDeleteArticle">글삭제</a-button>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -216,14 +211,18 @@ const openNotification = (placement) => {
                   <a-textarea v-model:value="value" :rows="4" />
                 </a-form-item>
                 <a-form-item>
-                  <a-button
-                    html-type="submit"
-                    :loading="submitting"
-                    type="primary"
-                    @click="() => open('topLeft')"
-                  >
-                    댓글 작성
-                  </a-button>
+                  <a-space>
+                    <a-button
+                      html-type="submit"
+                      :loading="submitting"
+                      type="primary"
+                      @click="() => open('topLeft')"
+                    >
+                      <RadiusUpleftOutlined />
+                      댓글 작성
+                    </a-button>
+                  </a-space>
+                  <contextHolder />
                 </a-form-item>
                 <contextHolder />
               </template>
