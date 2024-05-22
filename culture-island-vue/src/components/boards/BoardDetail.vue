@@ -177,9 +177,7 @@ const openNotification = (placement) => {
           </div>
           <div class="col-md-4 align-self-center text-end">댓글 : {{ comments.length }}</div>
           <div class="divider mb-3"></div>
-
-          <div v-html="article.content"></div>
-
+          <div class="content" v-html="article.content"></div>
           <div class="divider mt-3 mb-3 ms-1"></div>
           <div class="d-flex justify-content-end">
             <a-button type="primary" class="mb-3 ms-1" @click="moveList">글목록</a-button>
@@ -209,14 +207,6 @@ const openNotification = (placement) => {
                   <a-textarea v-model:value="value" :rows="4" />
                 </a-form-item>
                 <a-form-item>
-                  <!-- <a-button
-                    html-type="submit"
-                    :loading="submitting"
-                    type="primary"
-                    @click="commentSubmit"
-                  >
-                    댓글 작성
-                  </a-button> -->
                   <a-space>
                     <a-button
                       html-type="submit"

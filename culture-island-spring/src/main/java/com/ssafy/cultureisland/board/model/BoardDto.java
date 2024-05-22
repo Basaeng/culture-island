@@ -19,5 +19,5 @@ public class BoardDto {
     private String registerTime;
     private String type;
     private int pay;
-//    private List<FileInfoDto> fileInfos;
+    private List<FileInfoDto> fileInfos;
 }

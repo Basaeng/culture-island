@@ -34,10 +34,10 @@ function deleteArticle(articleno, success, fail) {
 }
 
 function uploadImage(formData) {
-  return Axios.post("/board/uploadImage", formData, {
+  return http.post("/board/uploadImage", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      // Authorization: `Bearer ${localStorage.getItem("jwt")}`,
     },
   });
 }

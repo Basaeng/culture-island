@@ -6,6 +6,8 @@ import { QuillEditor } from "@vueup/vue-quill";
 import { Axios } from "@/util/http-common";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
+const { VITE_API_URL } = import.meta.env;
+
 onMounted(() => {
   getMemberDetails();
 });
@@ -43,6 +45,7 @@ const article = ref({
   memberId: "",
   type: "",
   pay: "",
+  fileInfos: [],
 });
 
 if (props.type === "modify") {
@@ -145,9 +148,6 @@ const quillState = reactive({
         ["clean"],
         ["link", "image", "video"],
       ],
-      // handlers: {
-      //   image: imageHandler,
-      // },
     },
   },
   editorInstance: null,
@@ -156,10 +156,11 @@ const quillState = reactive({
 
 const onTextChange = (delta, oldDelta, source) => {
   const quill = quillState.editorInstance;
-  quillState.content = quill.root.innerHTML; // HTML content including images and videos
-  quillState.text = quill.getText(); // Plain text content
+  quillState.content = quill.root.innerHTML;
+  quillState.text = quill.getText();
 
   article.value.content = quillState.content;
+  console.log(article.value.content);
 };
 
 function imageHandler() {
@@ -175,16 +176,23 @@ function imageHandler() {
       formData.append("image", file);
 
       try {
-        // Upload the image to the server and get the URL
         const response = await uploadImage(formData);
-        const imageUrl = response.data.url; // Adjust based on your API response
+        const imageUrl = response.data;
 
-        // Insert the image URL into the editor
         const quill = quillState.editorInstance;
         const range = quill.getSelection();
-        quill.insertEmbed(range.index, "image", imageUrl);
+        const fullUrl = VITE_API_URL + "/board/files/" + imageUrl;
+        quill.insertEmbed(range.index, "image", fullUrl);
+        const url = "";
+
+        article.value.fileInfos.push({
+          originalFile: imageUrl,
+          saveFile: fullUrl,
+          saveFolder: url,
+        });
+        console.log(fullUrl);
       } catch (error) {
-        console.error("Image upload failed", error);
+        console.log(error);
       }
     }
   };
@@ -215,12 +223,9 @@ const handleOk = () => {
 };
 
 function onSubmit() {
-  // article.value.name = member.value.name;
-  // article.value.memberId = member.value.id;
-
   article.value.name = member.value.name;
   article.value.memberId = member.value.id;
-  article.value.content = quillState.content; // Use HTML content for the article
+  article.value.content = quillState.content;
 
   if (subjectErrMsg.value) {
     alert(subjectErrMsg.value);
@@ -319,8 +324,12 @@ function moveList() {
         @ready="
           (quill) => {
             quillState.editorInstance = quill;
+            quill.getModule('toolbar').addHandler('image', function () {
+              imageHandler();
+            });
           }
         "
+        style="height: 400px"
       />
     </div>
     <div class="col-auto text-center">
