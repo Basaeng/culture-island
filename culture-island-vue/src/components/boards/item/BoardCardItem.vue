@@ -35,8 +35,7 @@ const moveDetail = (article) => {
       <img class="card-img" alt="example" :src="fileInfos[0].saveFile" />
     </template>
     <template #cover v-else>
-      <!-- <img class="card-img" alt="example" :src="simpleImage" /> -->
-      <a-empty class="card-img" alt="example" :image="simpleImage" />
+      <a-empty class="m-0" />
     </template>
     <a-card-meta :title="article.subject">
       <template #avatar>
