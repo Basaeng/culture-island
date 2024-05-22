@@ -1,7 +1,7 @@
 <script setup>
 import { reactive, ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { registArticle, modifyArticle, detailArticle } from "@/api/board";
+import { registArticle, modifyArticle, detailArticle, uploadImage } from "@/api/board";
 import { QuillEditor } from "@vueup/vue-quill";
 import { Axios } from "@/util/http-common";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
@@ -124,8 +124,8 @@ const selectPayOptions = ref([
 ]);
 
 const quillState = reactive({
+  text: "",
   content: "",
-  _content: "",
   editorOption: {
     placeholder: "내용을 입력해주세요...",
     modules: {
@@ -145,6 +145,9 @@ const quillState = reactive({
         ["clean"],
         ["link", "image", "video"],
       ],
+      // handlers: {
+      //   image: imageHandler,
+      // },
     },
   },
   editorInstance: null,
@@ -153,9 +156,39 @@ const quillState = reactive({
 
 const onTextChange = (delta, oldDelta, source) => {
   const quill = quillState.editorInstance;
-  quillState._content = quill.root.innerHTML; // HTML content including images and videos
-  quillState.content = quill.getText(); // Plain text content
+  quillState.content = quill.root.innerHTML; // HTML content including images and videos
+  quillState.text = quill.getText(); // Plain text content
+
+  article.value.content = quillState.content;
 };
+
+function imageHandler() {
+  const input = document.createElement("input");
+  input.setAttribute("type", "file");
+  input.setAttribute("accept", "image/*");
+  input.click();
+
+  input.onchange = async () => {
+    const file = input.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        // Upload the image to the server and get the URL
+        const response = await uploadImage(formData);
+        const imageUrl = response.data.url; // Adjust based on your API response
+
+        // Insert the image URL into the editor
+        const quill = quillState.editorInstance;
+        const range = quill.getSelection();
+        quill.insertEmbed(range.index, "image", imageUrl);
+      } catch (error) {
+        console.error("Image upload failed", error);
+      }
+    }
+  };
+}
 
 const selectType = ref();
 const selectPay = ref();
@@ -187,7 +220,7 @@ function onSubmit() {
 
   article.value.name = member.value.name;
   article.value.memberId = member.value.id;
-  article.value.content = quillState._content; // Use HTML content for the article
+  article.value.content = quillState.content; // Use HTML content for the article
 
   if (subjectErrMsg.value) {
     alert(subjectErrMsg.value);
