@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = { "*" }, maxAge = 60000)
+@CrossOrigin(origins = {"*"}, maxAge = 60000)
 @RestController
 @RequestMapping(value = "/member")
 public class MemberController {
@@ -38,7 +38,8 @@ public class MemberController {
     private final JwtTokenProvider tokenProvider;
 
     @Autowired
-    public MemberController(MemberService memberService, BoardService boardService, AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
+    public MemberController(MemberService memberService, BoardService boardService,
+                            AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
         this.memberService = memberService;
         this.boardService = boardService;
         this.authenticationManager = authenticationManager;
@@ -54,16 +55,16 @@ public class MemberController {
     }
 
     @GetMapping("/member/{id}")
-    public ResponseEntity<?> findById(@PathVariable int id){
+    public ResponseEntity<?> findById(@PathVariable int id) {
         MemberDTO member = memberService.findById(id);
-        
+
         return new ResponseEntity<>(member, HttpStatus.OK);
     }
 
     @GetMapping("/me")
     public ResponseEntity<?> getMemberDetails(@RequestHeader HttpHeaders headers) {
         String currentUserName = memberService.getAuthenticUsername(headers);
-        System.out.println("currentName: "+ currentUserName);
+        System.out.println("currentName: " + currentUserName);
         MemberDTO member = memberService.findByUsername(currentUserName);
         System.out.println("member: " + member);
         if (member == null) {
@@ -73,13 +74,15 @@ public class MemberController {
     }
 
     @GetMapping("/myarticles")
-    public ResponseEntity<?> articleListById(@RequestParam Map<String, String> map, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> articleListById(@RequestParam Map<String, String> map,
+                                             @AuthenticationPrincipal UserDetails userDetails) {
         try {
             String username = userDetails.getUsername(); // JWT에서 추출된 사용자 ID
             MemberDTO member = memberService.findByUsername(username);
             String memberId = String.valueOf(member.getId());
             System.out.println("memberId:" + memberId);
             map.put("memberId", memberId);
+            map.put("my", "true");
             BoardListDto boardListDto = boardService.listArticle(map);
             System.out.println(boardListDto);
             return ResponseEntity.ok().body(boardListDto);

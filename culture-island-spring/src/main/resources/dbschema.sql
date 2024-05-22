@@ -150,9 +150,9 @@ DROP TABLE IF EXISTS `cultureisland`.`file` ;
 
 CREATE TABLE IF NOT EXISTS `cultureisland`.`file` (
                                                       `id` INT NOT NULL AUTO_INCREMENT,
-                                                      `save_folde` VARCHAR(64) NULL,
-    `original_file` VARCHAR(64) NULL,
-    `save_file` VARCHAR(64) NULL,
+                                                      `save_folder` VARCHAR(2048) NULL,
+    `original_file` VARCHAR(2048) NULL,
+    `save_file` VARCHAR(2048) NULL,
     `article_id` INT NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `fk_file_article1_idx` (`article_id` ASC) VISIBLE,

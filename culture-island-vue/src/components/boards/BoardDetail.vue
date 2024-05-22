@@ -4,18 +4,24 @@ import { h, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { detailArticle, deleteArticle } from "@/api/board";
 import { listComment, registComment } from "@/api/comment";
-import { UserOutlined, WarningOutlined } from "@ant-design/icons-vue";
-import { notification } from "ant-design-vue";
-import { Axios } from "@/util/http-common";
-
+import { Empty, notification } from "ant-design-vue";
+import {
+  UserOutlined,
+  WarningOutlined,
+  SmileOutlined,
+  RadiusUpleftOutlined,
+} from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Axios } from "@/util/http-common";
 
 const route = useRoute();
 const router = useRouter();
 
 // const articleno = ref(route.params.articleno);
 const { articleno } = route.params;
+
+const http = Axios();
 
 dayjs.extend(relativeTime);
 const comments = ref([]);
@@ -25,15 +31,13 @@ const value = ref("");
 const comment = ref({});
 const article = ref({});
 
-const http = Axios();
-
 onMounted(() => {
-  getMemberDetails();
   getArticle();
   getComments();
+  getMemberDetails();
 });
 
-const member = ref({});
+const member = ref("");
 
 const getMemberDetails = () => {
   http
@@ -44,7 +48,7 @@ const getMemberDetails = () => {
     })
     .then(({ data }) => {
       member.value = data;
-      // console.log("member : " + member.value.id)
+      console.log("member : " + member.value.id + " " + member.value.name);
     })
     .catch((error) => {
       console.error("Failed to fetch user details", error);
@@ -58,7 +62,7 @@ const getArticle = () => {
     articleno,
     ({ data }) => {
       article.value = data;
-      // console.log("article : " + article.value.memberId);
+      console.log(article.value);
     },
     (error) => {
       console.log(error);
@@ -72,7 +76,7 @@ const getComments = () => {
     articleno,
     ({ data }) => {
       comments.value = data;
-      // console.log(comments.value);
+      console.log(comments.value);
     },
     (error) => {
       console.log(error);
@@ -94,8 +98,8 @@ const commentSubmit = () => {
       depth: "",
       comment: value.value,
       articleNo: article.value.articleNo,
-      name: member.value.name, // 댓글 작성자 이름
-      memberNo: member.value.id, // 댓글 작성자 고유 번호
+      name: member.value.name,
+      memberNo: member.value.id,
     };
 
     registComment(
@@ -220,6 +224,7 @@ const openNotification = (placement) => {
                   </a-space>
                   <contextHolder />
                 </a-form-item>
+                <contextHolder />
               </template>
             </a-comment>
           </div>

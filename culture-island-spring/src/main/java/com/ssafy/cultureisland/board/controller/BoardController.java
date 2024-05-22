@@ -3,6 +3,7 @@ package com.ssafy.cultureisland.board.controller;
 import com.ssafy.cultureisland.board.model.BoardDto;
 import com.ssafy.cultureisland.board.model.BoardListDto;
 import com.ssafy.cultureisland.board.model.CommentDto;
+import com.ssafy.cultureisland.board.model.FileInfoDto;
 import com.ssafy.cultureisland.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,9 +27,6 @@ import java.util.UUID;
 public class BoardController {
 
     private BoardService boardService;
-
-//    @Value("${upload.path}")
-//    private String uploadPath;
 
     public BoardController(@Autowired BoardService boardService) {
         this.boardService = boardService;
@@ -60,6 +58,17 @@ public class BoardController {
             boardService.updateHit(articleNo);
             BoardDto article = boardService.getArticle(articleNo);
             return new ResponseEntity<BoardDto>(article, HttpStatus.OK);
+        } catch (Exception e) {
+            return exceptionHandling(e);
+        }
+    }
+
+    @GetMapping("/fileInfo/{articleNo}")
+    public ResponseEntity<?> getFileList(@PathVariable("articleNo") int articleNo) {
+        try {
+            List<FileInfoDto> list = boardService.getFileList(articleNo);
+            System.out.println(list);
+            return new ResponseEntity<List<FileInfoDto>>(list, HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
         }
@@ -117,10 +126,11 @@ public class BoardController {
 
         // OS 따라 구분자 분리
         String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("win")){
+        System.out.println(os);
+        if (os.contains("win")) {
             uploadPath = "\\upload\\files\\island_image\\";
-        } else{
-            uploadPath = "/upload/files/island_image/";
+        } else {
+            uploadPath = System.getProperty("user.home") + "/upload/files/island_image/";
         }
 
         try {
@@ -154,10 +164,10 @@ public class BoardController {
 
             // OS 따라 구분자 분리
             String os = System.getProperty("os.name").toLowerCase();
-            if (os.contains("win")){
+            if (os.contains("win")) {
                 uploadPath = "\\upload\\files\\island_image\\";
-            } else{
-                uploadPath ="/upload/files/island_image/";
+            } else {
+                uploadPath = System.getProperty("user.home") + "/upload/files/island_image/";
             }
 
             Path file = Paths.get(uploadPath, filename);
