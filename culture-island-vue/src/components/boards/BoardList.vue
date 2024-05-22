@@ -142,8 +142,10 @@ const openNotification = (placement) => {
               </template>
             </a-alert>
           </div>
-          <BoardCardItem v-for="article in articles" :key="article.articleNo" :article="article">
-          </BoardCardItem>
+          <div class="row">
+            <BoardCardItem v-for="article in articles" :key="article.articleNo" :article="article">
+            </BoardCardItem>
+          </div>
         </div>
       </div>
     </div>

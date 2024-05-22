@@ -160,7 +160,6 @@ const onTextChange = (delta, oldDelta, source) => {
   quillState.text = quill.getText();
 
   article.value.content = quillState.content;
-  console.log(article.value.content);
 };
 
 function imageHandler() {

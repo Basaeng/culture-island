@@ -1,7 +1,26 @@
 <script setup>
-import { UserOutlined } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
-defineProps({ article: Object });
+import { ref, onMounted } from "vue";
+import { listFile } from "@/api/board.js";
+import { Empty } from "ant-design-vue";
+const props = defineProps({ article: Object });
+
+const fileInfos = ref("");
+const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
+
+onMounted(() => {
+  listFile(
+    props.article.articleNo,
+    ({ data }) => {
+      console.log("data : " + data);
+      fileInfos.value = data;
+      console.log("fileInfo : " + fileInfos[0].value);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+});
 
 const router = useRouter();
 
@@ -11,12 +30,13 @@ const moveDetail = (article) => {
 </script>
 
 <template>
-  <a-card hoverable style="width: 300px; margin: 10px" @click="moveDetail(article)">
-    <template #cover>
-      <img
-        alt="example"
-        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-      />
+  <a-card class="card p-1" hoverable @click="moveDetail(article)">
+    <template #cover v-if="fileInfos != ''">
+      <img class="card-img" alt="example" :src="fileInfos[0].saveFile" />
+    </template>
+    <template #cover v-else>
+      <!-- <img class="card-img" alt="example" :src="simpleImage" /> -->
+      <a-empty class="card-img" alt="example" :image="simpleImage" />
     </template>
     <a-card-meta :title="article.subject">
       <template #avatar>
@@ -25,7 +45,6 @@ const moveDetail = (article) => {
             <UserOutlined />
           </template>
         </a-avatar>
-        <!-- <a-avatar src="https://joeschmoe.io/api/v1/random" /> -->
       </template>
       <template #description>
         <div class="row">
@@ -39,4 +58,15 @@ const moveDetail = (article) => {
   </a-card>
 </template>
 
-<style scoped></style>
+<style scoped>
+.card {
+  width: 300px;
+  height: 270px;
+  margin: 10px;
+}
+.card-img {
+  height: 150px;
+  width: 100%;
+  object-fit: cover;
+}
+</style>

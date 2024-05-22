@@ -5,6 +5,7 @@ import com.ssafy.cultureisland.board.model.BoardListDto;
 import com.ssafy.cultureisland.board.model.BoardMapper;
 import com.ssafy.cultureisland.board.model.CommentDto;
 import com.ssafy.cultureisland.board.model.CommentMapper;
+import com.ssafy.cultureisland.board.model.FileInfoDto;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,11 +78,21 @@ public class BoardServiceImpl implements BoardService {
     public void writeArticle(BoardDto boardDto) throws Exception {
         System.out.println(boardDto);
         boardMapper.writeArticle(boardDto);
+        List<FileInfoDto> fileInfos = boardDto.getFileInfos();
+        if (fileInfos != null && !fileInfos.isEmpty()) {
+            boardMapper.registerFile(boardDto);
+        }
     }
 
     @Override
     public BoardDto getArticle(int articleNo) throws Exception {
         return boardMapper.getArticle(articleNo);
+    }
+
+    @Override
+    public List<FileInfoDto> getFileList(int articleNo) throws Exception {
+        System.out.println("articleNO : " + articleNo);
+        return boardMapper.getFileList(articleNo);
     }
 
     @Override

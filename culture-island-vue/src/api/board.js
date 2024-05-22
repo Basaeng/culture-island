@@ -7,6 +7,11 @@ function listArticle(param, success, fail) {
   console.log("list");
 }
 
+function listFile(articleno, success, fail) {
+  http.get(`/board/fileInfo/${articleno}`).then(success).catch(fail);
+  console.log("fileList");
+}
+
 function detailArticle(articleno, success, fail) {
   http.get(`/board/${articleno}`).then(success).catch(fail);
   console.log("detail");
@@ -50,4 +55,5 @@ export {
   modifyArticle,
   deleteArticle,
   uploadImage,
+  listFile,
 };
