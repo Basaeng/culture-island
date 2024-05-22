@@ -87,28 +87,45 @@ onMounted(() => {
 
   getShowInfos();
 });
+
+const param = ref({
+  key: "",
+  word: "",
+  type: "",
+});
 </script>
 
 <template>
   <a-spin :spinning="isLoading" tip="불러오는 중..." size="large">
     <div v-if="markerList.length > 0">
-      <KakaoMap
-        :lat="coordinate.lat"
-        :lng="coordinate.lng"
-        :level="14"
-        :markerCluster="{ markers: markerList }"
-        :disableClickZoom="true"
-        @onLoadKakaoMapMarkerCluster="onLoadKakaoMapMarkerCluster"
-        @onLoadKakaoMap="onLoadKakaoMap"
-      >
-      <!-- <KakaoMapMarker
-          v-for="(marker, index) in markerList"
-          :key="index"
-          :lat="marker.lat"
-          :lng="marker.lng"
-          :infoWindow="marker.infoWindow"
-        /> -->
-    </KakaoMap>
+      <div class="form-container d-flex justify-content-center">
+        <form class="d-flex justify-content-center mt-2" style="width:50%">
+          <div class="input-group input-group-sm">
+            <input
+              type="text"
+              class="form-control"
+              v-model="param.word"
+              placeholder="검색어..."
+            />
+            <button class="btn island_button_style" type="button" @click="getArticleList">
+              검색
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="map-container mt-5">
+        <KakaoMap
+          :lat="coordinate.lat"
+          :lng="coordinate.lng"
+          :level="14"
+          class="kakao-map"
+          :markerCluster="{ markers: markerList }"
+          :disableClickZoom="true"
+          @onLoadKakaoMapMarkerCluster="onLoadKakaoMapMarkerCluster"
+          @onLoadKakaoMap="onLoadKakaoMap"
+        >
+        </KakaoMap>
+      </div>
     </div>
     <div v-else>
       Loading...
@@ -116,11 +133,26 @@ onMounted(() => {
   </a-spin>
 </template>
 
+
 <style scoped>
 .ant-spin {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+
+.island_color {
+  color: #920101;
+}
+.island_button_style {
+  background-color: #920101;
+  color: white;
+}
+
+.nav {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 </style>
