@@ -42,14 +42,12 @@ onMounted(() => {
   <a-card hoverable style="width: 300px; margin: 10px" @click="moveDetail(props.likedShow)">
     <div class="card-content">
       <div class="image-container">
-        <img
-          alt="example"
-          :src="props.likedShow.mainImg"
-          class="cover-image"
-        />
+        <img alt="example" :src="props.likedShow.mainImg" class="cover-image" />
       </div>
-      <a-card-meta :title="props.likedShow.cultureTitle" class="meta-content">
-
+      <a-card-meta class="meta-content">
+        <template #title>
+          <div class="meta-title">{{ props.likedShow.cultureTitle }}</div>
+        </template>
         <template #description>
           <div class="col">분류: {{ props.likedShow.cultureCodename }}</div>
           <br />
@@ -65,6 +63,7 @@ onMounted(() => {
 .card-content {
   display: flex;
   align-items: center;
+  overflow: hidden;
 }
 
 .image-container {
@@ -79,5 +78,18 @@ onMounted(() => {
 .meta-content {
   flex: 1;
   padding-left: 10px;
+  overflow: hidden;
+}
+
+.meta-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.col {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

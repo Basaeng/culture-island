@@ -1,3 +1,55 @@
+<template>
+  <a-spin :spinning="isLoading" tip="불러오는 중..." size="large">
+    <div class="container-fluid d-flex justify-content-center">
+      <div class="col-lg-8 col-md-8 col-sm-10 page" v-if="itemData">
+        <div class="d-flex flex-column align-items-center mt-3">
+          <div class="title-container d-flex align-items-center">
+            <h3 class="me-3">{{ itemData.TITLE }}</h3>
+            <img
+              :src="isHeartFilled ? filledHeart : emptyHeart"
+              alt="하트 이미지"
+              class="heart-img"
+              @click="toggleHeart"
+            />
+          </div>
+        </div>
+        <div class="content mt-5 row">
+          <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-center align-items-center">
+            <img :src="itemData.MAIN_IMG" alt="img" class="responsive-img" />
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-12 mt-3">
+            <p>위치: {{ itemData.GUNAME }} {{ itemData.PLACE }}</p>
+            <p>기간: {{ itemData.DATE }}</p>
+            <p>요금: {{ itemData.USE_FEE }}</p>
+            <p>대상: {{ itemData.USE_TRGT }}</p>
+            <a :href="itemData.ORG_LINK"
+              ><button class="btn island_button_style">세부 내용</button></a
+            >
+            <div class="mt-4">
+              <button class="btn island_button_style" @click="fetchGPTMessage">gpt에게 공연 물어보기</button>
+            </div>
+          </div>
+        </div>
+        <!-- 나머지 내용 -->
+        <div class="row mt-3 d-flex justify-content-center">위치</div>
+        <div class="mt-2 mb-5 d-flex justify-content-center">
+          <KakaoMap width=2000 height=500 :lat="coordinate.lat" :lng="coordinate.lng" :draggable="true">
+            <KakaoMapMarker :lat="coordinate.lat" :lng="coordinate.lng"></KakaoMapMarker>
+          </KakaoMap>
+        </div>
+      </div>
+      <div v-else>
+        <p>{{ noDataMessage }}</p>
+      </div>
+    </div>
+  </a-spin>
+
+  <!-- 모달 컴포넌트 추가 -->
+  <a-modal v-model:open="isModalVisible" title="GPT Response" @cancel="closeModal" @ok="closeModal">
+    <p>{{ modalMessage }}</p>
+  </a-modal>
+</template>
+
 <script setup>
 import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
@@ -25,20 +77,32 @@ const isHeartFilled = ref(false); // 하트 상태를 관리하는 ref
 const member = ref(null);
 const isLoading = ref(true); // 로딩 상태를 위한 변수 추가
 
+const modalMessage = ref(""); // 모달에 표시할 메시지를 저장하는 ref 변수
+const isModalVisible = ref(false); // 모달의 열림/닫힘 상태를 저장하는 ref 변수
+
 const { VITE_OPENAI_API_KEY } = import.meta.env;
 
 const openai = new OpenAI({ apiKey: VITE_OPENAI_API_KEY, dangerouslyAllowBrowser: true });
 openai.apiKey = VITE_OPENAI_API_KEY;
 
-async function main() {
-  const completion = await openai.chat.completions.create({
-    messages: [{ role: "user", content: `${itemData.value.TITLE}에 대해서 설명해줘 모른다면 검색해줘` }],
-    model: "gpt-3.5-turbo",
-  });
+const fetchGPTMessage = async () => {
+  isLoading.value = true;
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [{ role: "user", content: `${itemData.value.TITLE}에 대해서 설명해줘 모른다면 검색해줘` }],
+      model: "gpt-3.5-turbo",
+    });
+    modalMessage.value = completion.choices[0].message.content; // GPT의 응답을 저장
+    isModalVisible.value = true; // 모달을 열기
+  } catch (error) {
+    console.error("Error generating GPT response:", error);
+  }
+  isLoading.value = false;
+};
 
-  console.log(completion);
-  console.log("gpt : " + completion);
-}
+const closeModal = () => {
+  isModalVisible.value = false; // 모달을 닫기
+};
 
 const getCultureDetail = () => {
   let apiUrl = `/1/1/${CODENAME}/${TITLE}/${DATE}`;
@@ -232,52 +296,8 @@ const coordinate = ref({
 
 onMounted(() => {
   getMemberDetails();
-  main();
 });
 </script>
-
-<template>
-  <a-spin :spinning="isLoading" tip="불러오는 중..." size="large">
-    <div class="container-fluid d-flex justify-content-center">
-      <div class="col-lg-8 col-md-8 col-sm-10 page" v-if="itemData">
-        <div class="d-flex flex-column align-items-center mt-3">
-          <div class="title-container d-flex align-items-center">
-            <h3 class="me-3">{{ itemData.TITLE }}</h3>
-            <img
-              :src="isHeartFilled ? filledHeart : emptyHeart"
-              alt="하트 이미지"
-              class="heart-img"
-              @click="toggleHeart"
-            />
-          </div>
-        </div>
-        <div class="content mt-5 row">
-          <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-center align-items-center">
-            <img :src="itemData.MAIN_IMG" alt="img" class="responsive-img" />
-          </div>
-          <div class="col-lg-6 col-md-6 col-sm-12 mt-3">
-            <p>위치: {{ itemData.GUNAME }} {{ itemData.PLACE }}</p>
-            <p>기간: {{ itemData.DATE }}</p>
-            <p>요금: {{ itemData.USE_FEE }}</p>
-            <p>대상: {{ itemData.USE_TRGT }}</p>
-            <a :href="itemData.ORG_LINK"
-              ><button class="btn island_button_style">세부 내용</button></a
-            >
-          </div>
-        </div>
-        <!-- 나머지 내용 -->
-        <div class="mt-5 d-flex justify-content-center">
-          <KakaoMap :lat="coordinate.lat" :lng="coordinate.lng" :draggable="true">
-            <KakaoMapMarker :lat="coordinate.lat" :lng="coordinate.lng"></KakaoMapMarker>
-          </KakaoMap>
-        </div>
-      </div>
-      <div v-else>
-        <p>{{ noDataMessage }}</p>
-      </div>
-    </div>
-  </a-spin>
-</template>
 
 <style scoped>
 .responsive-img {
