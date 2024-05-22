@@ -1,8 +1,10 @@
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { reactive, ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { registArticle, modifyArticle, detailArticle } from "@/api/board";
+import { QuillEditor } from "@vueup/vue-quill";
 import { Axios } from "@/util/http-common";
+import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
 onMounted(() => {
   getMemberDetails();
@@ -12,22 +14,25 @@ const http = Axios();
 const member = ref({});
 
 const getMemberDetails = () => {
-  http.get(`member/me`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt')}`
-    }
-  }).then(({data})=>{
+  http
+    .get(`member/me`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    })
+    .then(({ data }) => {
       member.value = data;
-      console.log("member : " + member.value.id + " " + member.value.name)
-  }).catch ((error)=>{
-    console.error('Failed to fetch user details', error);
-  });
+      console.log("member : " + member.value.id + " " + member.value.name);
+    })
+    .catch((error) => {
+      console.error("Failed to fetch user details", error);
+    });
 };
 
 const router = useRouter();
 const route = useRoute();
 
-const props = defineProps({ type: String, member:Object });
+const props = defineProps({ type: String, member: Object });
 
 const isUseId = ref(false);
 
@@ -35,7 +40,7 @@ const article = ref({
   subject: "",
   content: "",
   name: "",
-  memberId: "", 
+  memberId: "",
   type: "",
   pay: "",
 });
@@ -118,6 +123,40 @@ const selectPayOptions = ref([
   },
 ]);
 
+const quillState = reactive({
+  content: "",
+  _content: "",
+  editorOption: {
+    placeholder: "내용을 입력해주세요...",
+    modules: {
+      toolbar: [
+        ["bold", "italic", "underline", "strike"],
+        ["blockquote", "code-block"],
+        [{ header: 1 }, { header: 2 }],
+        [{ list: "ordered" }, { list: "bullet" }],
+        [{ script: "sub" }, { script: "super" }],
+        [{ indent: "-1" }, { indent: "+1" }],
+        [{ direction: "rtl" }],
+        [{ size: ["small", false, "large", "huge"] }],
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+        [{ color: [] }, { background: [] }],
+        [{ font: [] }],
+        [{ align: [] }],
+        ["clean"],
+        ["link", "image", "video"],
+      ],
+    },
+  },
+  editorInstance: null,
+  disabled: false,
+});
+
+const onTextChange = (delta, oldDelta, source) => {
+  const quill = quillState.editorInstance;
+  quillState._content = quill.root.innerHTML; // HTML content including images and videos
+  quillState.content = quill.getText(); // Plain text content
+};
+
 const selectType = ref();
 const selectPay = ref();
 
@@ -143,8 +182,13 @@ const handleOk = () => {
 };
 
 function onSubmit() {
+  // article.value.name = member.value.name;
+  // article.value.memberId = member.value.id;
+
   article.value.name = member.value.name;
   article.value.memberId = member.value.id;
+  article.value.content = quillState._content; // Use HTML content for the article
+
   if (subjectErrMsg.value) {
     alert(subjectErrMsg.value);
   } else if (contentErrMsg.value) {
@@ -164,14 +208,14 @@ function writeArticle() {
   registArticle(
     article.value,
     (response) => {
-      modalStatus.value = "success"
-      modalTitle.value = "작성 완료"
-      modalSubTitle.value = "글을 작성하였어요, 목록으로 돌아갈까요?"
+      modalStatus.value = "success";
+      modalTitle.value = "작성 완료";
+      modalSubTitle.value = "글을 작성하였어요, 목록으로 돌아갈까요?";
     },
     (error) => {
-      modalStatus.value = "error"
-      modalTitle.value = "작성 실패"
-      modalSubTitle.value = "글을 작성하는데 실패했어요, 목록으로 돌아갈까요?"
+      modalStatus.value = "error";
+      modalTitle.value = "작성 실패";
+      modalSubTitle.value = "글을 작성하는데 실패했어요, 목록으로 돌아갈까요?";
       console.log(error);
     }
   );
@@ -183,15 +227,15 @@ function updateArticle() {
   modifyArticle(
     article.value,
     (response) => {
-      modalStatus.value = "success"
-      modalTitle.value = "수정 완료"
-      modalSubTitle.value = "글을 수정하였어요, 목록으로 돌아갈까요?"
+      modalStatus.value = "success";
+      modalTitle.value = "수정 완료";
+      modalSubTitle.value = "글을 수정하였어요, 목록으로 돌아갈까요?";
     },
     (error) => {
       console.log(error);
-      modalStatus.value = "error"
-      modalTitle.value = "수정 실패"
-      modalSubTitle.value = "글을 수정하는데 실패했어요, 목록으로 돌아갈까요?"
+      modalStatus.value = "error";
+      modalTitle.value = "수정 실패";
+      modalSubTitle.value = "글을 수정하는데 실패했어요, 목록으로 돌아갈까요?";
     }
   );
 }
@@ -203,16 +247,6 @@ function moveList() {
 
 <template>
   <form @submit.prevent="onSubmit">
-    <!-- <div class="mb-3">
-      <label for="userid" class="form-label">작성자 ID : </label>
-      <input
-        type="text"
-        class="form-control"
-        v-model="article.name"
-        :disabled="isUseId"
-        placeholder="작성자ID..."
-      />
-    </div> -->
     <div class="row">
       <div class="col">
         <label for="subject" class="form-label">제목 : </label>
@@ -243,7 +277,18 @@ function moveList() {
     </div>
     <div class="mb-3 mt-3">
       <label for="content" class="form-label">내용 : </label>
-      <textarea class="form-control" v-model="article.content" rows="10"></textarea>
+      <!-- <textarea class="form-control" v-model="article.content" rows="10"></textarea> -->
+      <QuillEditor
+        theme="snow"
+        v-model:value="quillState.content"
+        :options="quillState.editorOption"
+        @text-change="onTextChange"
+        @ready="
+          (quill) => {
+            quillState.editorInstance = quill;
+          }
+        "
+      />
     </div>
     <div class="col-auto text-center">
       <button
@@ -261,12 +306,8 @@ function moveList() {
   </form>
   <div>
     <a-modal v-model:open="open" title="" :confirm-loading="confirmLoading" @ok="handleOk">
-        <a-result
-          :status="`${modalStatus}`"
-          :title="`${modalTitle}`"
-          :sub-title="`${modalSubTitle}`"
-        >
-        </a-result>
+      <a-result :status="`${modalStatus}`" :title="`${modalTitle}`" :sub-title="`${modalSubTitle}`">
+      </a-result>
     </a-modal>
   </div>
 </template>
