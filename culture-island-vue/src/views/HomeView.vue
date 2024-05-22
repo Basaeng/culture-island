@@ -5,6 +5,9 @@
       <video id="bg-video" src="@/assets/Concert.mp4" autoplay muted loop>
         Your browser is not supported!
       </video>
+
+      문화 여행!!!!!!!!!!! 이!!!!!!!!!!!!!!
+
   </div>
 </template>
 
