@@ -27,9 +27,6 @@ public class BoardController {
 
     private BoardService boardService;
 
-//    @Value("${upload.path}")
-//    private String uploadPath;
-
     public BoardController(@Autowired BoardService boardService) {
         this.boardService = boardService;
     }

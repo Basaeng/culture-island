@@ -5,6 +5,7 @@ import com.ssafy.cultureisland.board.model.BoardListDto;
 import com.ssafy.cultureisland.board.model.BoardMapper;
 import com.ssafy.cultureisland.board.model.CommentDto;
 import com.ssafy.cultureisland.board.model.CommentMapper;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,10 +51,19 @@ public class BoardServiceImpl implements BoardService {
             param.put("memberId", memberId);
         }
 
-        List<BoardDto> list = boardMapper.listArticle(param);
-        int totalArticleCount = boardMapper.getTotalArticleCount(param);
-        int totalPageCount = (totalArticleCount - 1) / sizePerPage + 1;
+        List<BoardDto> list = new ArrayList<>();
+        int totalArticleCount;
+        int totalPageCount;
 
+        if (map.get("my") != null && map.get("my").equals("true")) {
+            list = boardMapper.memberListArticle(param);
+            totalArticleCount = boardMapper.getMemberTotalArticleCount(param);
+            totalPageCount = (totalArticleCount - 1) / sizePerPage + 1;
+        } else {
+            list = boardMapper.listArticle(param);
+            totalArticleCount = boardMapper.getTotalArticleCount(param);
+            totalPageCount = (totalArticleCount - 1) / sizePerPage + 1;
+        }
         BoardListDto boardListDto = new BoardListDto();
         boardListDto.setArticles(list);
         boardListDto.setCurrentPage(currentPage);

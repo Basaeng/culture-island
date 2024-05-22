@@ -16,7 +16,7 @@
     </resultMap>
 
     <resultMap type="boardDto" id="viewArticle" extends="article">
-        <collection property="fileInfos" column="article_id" javaType="list" ofType="fileInfoDto" select="fileInfoList"/>
+        <collection property="fileInfos" column="id" javaType="list" ofType="fileInfoDto" select="fileInfoList"/>
     </resultMap>
 
     <resultMap type="fileInfoDto" id="file">
@@ -42,7 +42,24 @@
         </if>
     </sql>
 
-    <select id="listArticle" parameterType="map" resultType="BoardDto" resultMap="article">
+    <select id="listArticle" parameterType="map" resultMap="article">
+        select a.id, a.member_id, a.subject, a.content, a.hit, a.register_time, a.type, a.pay, a.name
+        from article a, member m
+        where a.member_id = m.id
+        <include refid="search"></include>
+        order by a.register_time desc
+        limit #{start}, #{listSize}
+    </select>
+
+    <select id="getTotalArticleCount" parameterType="map" resultType="int">
+        select count(id)
+        from article
+        <where>
+            <include refid="search"></include>
+        </where>
+    </select>
+
+    <select id="memberListArticle" parameterType="map" resultType="BoardDto" resultMap="article">
         SELECT * FROM article
         WHERE subject LIKE CONCAT('%', #{word}, '%')
         <if test="memberId != null">
@@ -51,7 +68,7 @@
         LIMIT #{start}, #{listSize}
     </select>
 
-    <select id="getTotalArticleCount" parameterType="map" resultType="int">
+    <select id="getMemberTotalArticleCount" parameterType="map" resultType="int">
         SELECT COUNT(*) FROM article
         WHERE subject LIKE CONCAT('%', #{word}, '%')
         <if test="memberId != null">
