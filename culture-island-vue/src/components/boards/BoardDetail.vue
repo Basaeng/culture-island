@@ -4,18 +4,24 @@ import { h, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { detailArticle, deleteArticle } from "@/api/board";
 import { listComment, registComment } from "@/api/comment";
-import { UserOutlined, WarningOutlined } from "@ant-design/icons-vue";
-import { notification } from "ant-design-vue";
-import { Axios } from "@/util/http-common";
-
+import { Empty, notification } from "ant-design-vue";
+import {
+  UserOutlined,
+  WarningOutlined,
+  SmileOutlined,
+  RadiusUpleftOutlined,
+} from "@ant-design/icons-vue";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Axios } from "@/util/http-common";
 
 const route = useRoute();
 const router = useRouter();
 
 // const articleno = ref(route.params.articleno);
 const { articleno } = route.params;
+
+const http = Axios();
 
 dayjs.extend(relativeTime);
 const comments = ref([]);
@@ -25,15 +31,13 @@ const value = ref("");
 const comment = ref({});
 const article = ref({});
 
-const http = Axios();
-
 onMounted(() => {
-  getMemberDetails();
   getArticle();
   getComments();
+  getMemberDetails();
 });
 
-const member = ref({});
+const member = ref("");
 
 const getMemberDetails = () => {
   http
@@ -44,7 +48,7 @@ const getMemberDetails = () => {
     })
     .then(({ data }) => {
       member.value = data;
-      // console.log("member : " + member.value.id)
+      console.log("member : " + member.value.id + " " + member.value.name);
     })
     .catch((error) => {
       console.error("Failed to fetch user details", error);
@@ -58,7 +62,7 @@ const getArticle = () => {
     articleno,
     ({ data }) => {
       article.value = data;
-      // console.log("article : " + article.value.memberId);
+      console.log(article.value);
     },
     (error) => {
       console.log(error);
@@ -72,7 +76,7 @@ const getComments = () => {
     articleno,
     ({ data }) => {
       comments.value = data;
-      // console.log(comments.value);
+      console.log(comments.value);
     },
     (error) => {
       console.log(error);
@@ -94,14 +98,13 @@ const commentSubmit = () => {
       depth: "",
       comment: value.value,
       articleNo: article.value.articleNo,
-      name: member.value.name, // 댓글 작성자 이름
-      memberNo: member.value.id, // 댓글 작성자 고유 번호
+      name: member.value.name,
+      memberNo: member.value.id,
     };
 
     registComment(
       comment.value,
       (response) => {
-        value.value = "";
         console.log("댓글 작성 완료");
         getComments();
       },
@@ -177,14 +180,20 @@ const openNotification = (placement) => {
           </div>
           <div class="col-md-4 align-self-center text-end">댓글 : {{ comments.length }}</div>
           <div class="divider mb-3"></div>
-          <div class="content" v-html="article.content"></div>
-          <div class="divider mt-3 mb-3 ms-1"></div>
+          <div class="text-center">
+            {{ article.content }}
+          </div>
+          <div class="divider mt-3 mb-3"></div>
           <div class="d-flex justify-content-end">
-            <a-button type="primary" class="mb-3 ms-1" @click="moveList">글목록</a-button>
-            <div v-if="member.id == article.memberId">
-              <a-button type="primary" class="mb-3 ms-1" @click="moveModify">글수정</a-button>
-              <a-button danger class="mb-3 ms-1" @click="onDeleteArticle">글삭제</a-button>
-            </div>
+            <button type="button" class="btn btn-outline-primary mb-3" @click="moveList">
+              글목록
+            </button>
+            <button type="button" class="btn btn-outline-success mb-3 ms-1" @click="moveModify">
+              글수정
+            </button>
+            <button type="button" class="btn btn-outline-danger mb-3 ms-1" @click="onDeleteArticle">
+              글삭제
+            </button>
           </div>
         </div>
         <div class="row">
@@ -207,19 +216,16 @@ const openNotification = (placement) => {
                   <a-textarea v-model:value="value" :rows="4" />
                 </a-form-item>
                 <a-form-item>
-                  <a-space>
-                    <a-button
-                      html-type="submit"
-                      :loading="submitting"
-                      type="primary"
-                      @click="() => open('topLeft')"
-                    >
-                      <RadiusUpleftOutlined />
-                      댓글 작성
-                    </a-button>
-                  </a-space>
-                  <contextHolder />
+                  <a-button
+                    html-type="submit"
+                    :loading="submitting"
+                    type="primary"
+                    @click="() => open('topLeft')"
+                  >
+                    댓글 작성
+                  </a-button>
                 </a-form-item>
+                <contextHolder />
               </template>
             </a-comment>
           </div>

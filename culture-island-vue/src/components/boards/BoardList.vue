@@ -6,7 +6,6 @@ import { Axios } from "@/util/http-common";
 import { RadiusUpleftOutlined, SmileOutlined, WarningOutlined } from "@ant-design/icons-vue";
 import { Empty, notification } from "ant-design-vue";
 
-
 import BoardSideNavigation from "./item/BoardSideNavigation.vue";
 import BoardCardItem from "./item/BoardCardItem.vue";
 import BoardListItem from "@/components/boards/item/BoardListItem.vue";
@@ -34,7 +33,7 @@ onMounted(() => {
 });
 
 const http = Axios();
-const member = ref({});
+const member = ref("");
 
 const getMemberDetails = () => {
   http
