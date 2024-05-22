@@ -5,12 +5,20 @@ import com.ssafy.cultureisland.board.model.BoardListDto;
 import com.ssafy.cultureisland.board.model.CommentDto;
 import com.ssafy.cultureisland.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @CrossOrigin("*")
 @RestController
@@ -18,6 +26,9 @@ import java.util.Map;
 public class BoardController {
 
     private BoardService boardService;
+
+//    @Value("${upload.path}")
+//    private String uploadPath;
 
     public BoardController(@Autowired BoardService boardService) {
         this.boardService = boardService;
@@ -93,6 +104,70 @@ public class BoardController {
             return new ResponseEntity<Void>(HttpStatus.OK);
         } catch (Exception e) {
             return exceptionHandling(e);
+        }
+    }
+
+    @PostMapping("/uploadImage")
+    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) {
+        if (file.isEmpty()) {
+            return new ResponseEntity<>("Please select a file!", HttpStatus.BAD_REQUEST);
+        }
+
+        String uploadPath;
+
+        // OS 따라 구분자 분리
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")){
+            uploadPath = "\\upload\\files\\island_image\\";
+        } else{
+            uploadPath = "/upload/files/island_image/";
+        }
+
+        try {
+            // 저장할 디렉토리가 없으면 생성
+            File directory = new File(uploadPath);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            // 파일 이름을 고유하게 생성
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path path = Paths.get(uploadPath + fileName);
+            Files.write(path, file.getBytes());
+
+            System.out.println(path);
+            // 클라이언트에 반환할 이미지 URL
+            String imageUrl = fileName;
+            System.out.println(imageUrl);
+            return ResponseEntity.ok(imageUrl);
+
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping("/files/{filename:.+}")
+    public ResponseEntity<?> getFile(@PathVariable String filename) {
+        try {
+            String uploadPath;
+
+            // OS 따라 구분자 분리
+            String os = System.getProperty("os.name").toLowerCase();
+            if (os.contains("win")){
+                uploadPath = "\\upload\\files\\island_image\\";
+            } else{
+                uploadPath ="/upload/files/island_image/";
+            }
+
+            Path file = Paths.get(uploadPath, filename);
+            if (Files.exists(file)) {
+                return ResponseEntity.ok(Files.readAllBytes(file));
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -33,6 +33,15 @@ function deleteArticle(articleno, success, fail) {
   console.log("delete");
 }
 
+function uploadImage(formData) {
+  return http.post("/board/uploadImage", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      // Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+    },
+  });
+}
+
 export {
   listArticle,
   detailArticle,
@@ -40,4 +49,5 @@ export {
   getModifyArticle,
   modifyArticle,
   deleteArticle,
+  uploadImage,
 };
