@@ -3,7 +3,7 @@
     <div class="container-fluid d-flex justify-content-center">
       <div class="col-lg-8 col-md-8 col-sm-10 page" v-if="itemData">
         <div class="d-flex flex-column align-items-center mt-3">
-          <div class="title-container d-flex align-items-center">
+          <div class="mt-2 title-container d-flex align-items-center">
             <h3 class="me-3">{{ itemData.TITLE }}</h3>
             <img
               :src="isHeartFilled ? filledHeart : emptyHeart"
@@ -22,18 +22,17 @@
             <p>기간: {{ itemData.DATE }}</p>
             <p>요금: {{ itemData.USE_FEE }}</p>
             <p>대상: {{ itemData.USE_TRGT }}</p>
-            <a :href="itemData.ORG_LINK"
-              ><button class="btn island_button_style">세부 내용</button></a
-            >
-            <div class="mt-4">
+            <div class="mt-3 button-group">
+              <a :href="itemData.ORG_LINK">
+                <button class="btn island_button_style">세부 내용</button>
+              </a>
               <button class="btn island_button_style" @click="fetchGPTMessage">gpt에게 공연 물어보기</button>
             </div>
           </div>
         </div>
         <!-- 나머지 내용 -->
-        <div class="row mt-3 d-flex justify-content-center">위치</div>
         <div class="mt-2 mb-5 d-flex justify-content-center">
-          <KakaoMap width=2000 height=500 :lat="coordinate.lat" :lng="coordinate.lng" :draggable="true">
+          <KakaoMap width=1500 height=500 :lat="coordinate.lat" :lng="coordinate.lng" :draggable="true">
             <KakaoMapMarker :lat="coordinate.lat" :lng="coordinate.lng"></KakaoMapMarker>
           </KakaoMap>
         </div>
@@ -45,9 +44,17 @@
   </a-spin>
 
   <!-- 모달 컴포넌트 추가 -->
-  <a-modal v-model:open="isModalVisible" title="GPT Response" @cancel="closeModal" @ok="closeModal">
-    <p>{{ modalMessage }}</p>
-  </a-modal>
+  <a-modal v-model:open="isModalVisible" @cancel="closeModal" @ok="closeModal" :width="800">
+  <template #title>
+    <div class="d-flex align-items-center">
+      GPT Response
+      <img src="@/assets/gpt-icon.png" alt="GPT Icon" class="gpt-icon ms-2" />
+    </div>
+  </template>
+  <p v-html="modalMessage"></p>
+</a-modal>
+
+
 </template>
 
 <script setup>
@@ -89,16 +96,33 @@ const fetchGPTMessage = async () => {
   isLoading.value = true;
   try {
     const completion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: `${itemData.value.TITLE}에 대해서 설명해줘 모른다면 검색해줘` }],
-      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: `${itemData.value.TITLE}에 대해서 설명해줘` }],
+      model: "gpt-4o",
     });
-    modalMessage.value = completion.choices[0].message.content; // GPT의 응답을 저장
+    const rawMessage = completion.choices[0].message.content; // GPT의 응답을 저장
+    console.log(modalMessage.value)
+    modalMessage.value = formatMessage(rawMessage);
     isModalVisible.value = true; // 모달을 열기
   } catch (error) {
     console.error("Error generating GPT response:", error);
   }
   isLoading.value = false;
 };
+
+const formatMessage = (message) => {
+  return message.replace(/(\d+\.)|(\.)/g, (match, p1, p2) => {
+    if (p1) {
+      return p1; // 숫자 뒤에 오는 마침표는 그대로 둡니다.
+    }
+    if (p2) {
+      return '.<br><br>'; // 그 외의 경우는 줄바꿈을 추가합니다.
+    }
+  });
+};
+
+
+
+
 
 const closeModal = () => {
   isModalVisible.value = false; // 모달을 닫기
@@ -320,5 +344,16 @@ onMounted(() => {
   color: white;
   text-decoration-color: white;
   text-decoration: none;
+  margin-right: 10px; /* 오른쪽 마진 추가 */
+  margin-bottom: 10px; /* 아래쪽 마진 추가 */
+}
+.gpt-icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 8px;
+}
+.button-group {
+  display: flex;
+  flex-wrap: wrap; /* 화면이 줄어들 때 버튼이 줄바꿈 되도록 설정 */
 }
 </style>
