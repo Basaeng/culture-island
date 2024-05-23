@@ -73,9 +73,11 @@ const fetchCultureList = async () => {
 
   try {
     const { data } = await http.get(apiUrl);
+    
     if (data.culturalEventInfo && data.culturalEventInfo.row.length > 0) {
+      console.log("hello:", data.culturalEventInfo)
       items.value = data.culturalEventInfo.row;
-      totalPage.value = Math.ceil(data.total / pagesize) || 0;
+      totalPage.value = Math.ceil(data.culturalEventInfo.list_total_count / pagesize) || 0;
       noDataMessage.value = "";
     } else {
       items.value = [];
@@ -136,7 +138,7 @@ const onPageChange = (val) => {
               </form>
             </div>
           </div>
-          <div class="row d-flex justify-content-end">
+          <div class="row d-flex justify-content-start">
             <div v-if="noDataMessage" class="col d-flex justify-content-center">
               <p>{{ noDataMessage }}</p>
             </div>
@@ -149,7 +151,9 @@ const onPageChange = (val) => {
           <a-pagination
             v-model:current="currentPage"
             :total="totalPage * 10"
+            :pagesize="10"
             @change="onPageChange"
+            :showSizeChanger="false"
           />
         </div>
         <div class="col-1"></div>
