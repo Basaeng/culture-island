@@ -174,9 +174,13 @@ const getMemberDetails = () => {
       getCultureDetail();
     })
     .catch((error) => {
-      console.error("Failed to fetch user details", error);
-    });
+    authStore.clearToken();
+      alert("잘못된 접근이거나 토큰이 만료되었습니다.")
+    router.push({name: "home"})
+    console.error('Failed to fetch user details', error);
+  })
 };
+
 
 const toggleHeart = () => {
   if (!isHeartFilled.value) {
