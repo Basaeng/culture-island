@@ -8,7 +8,6 @@ import { Empty, notification } from "ant-design-vue";
 
 import BoardSideNavigation from "./item/BoardSideNavigation.vue";
 import BoardCardItem from "./item/BoardCardItem.vue";
-import BoardListItem from "@/components/boards/item/BoardListItem.vue";
 import PageNavigation from "@/components/common/PageNavigation.vue";
 
 const router = useRouter();
