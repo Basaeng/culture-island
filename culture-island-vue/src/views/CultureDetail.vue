@@ -28,10 +28,18 @@
               </a>
               <button class="btn island_button_style" @click="fetchGPTMessage">gpt에게 공연 물어보기</button>
             </div>
+            <div class="mt-4">
+              <div class="">
+                공연에 별점 매기기
+              </div>
+              <div class="mt-2">
+              <star-rating :rating="rating" :increment="0.5" @update:rating="setRating"/>
+              </div>
+            </div>
           </div>
         </div>
         <!-- 나머지 내용 -->
-        <div class="mt-2 mb-5 d-flex justify-content-center">
+        <div class="mt-4 mb-5 d-flex justify-content-center">
           <KakaoMap width=1500 height=500 :lat="coordinate.lat" :lng="coordinate.lng" :draggable="true">
             <KakaoMapMarker :lat="coordinate.lat" :lng="coordinate.lng"></KakaoMapMarker>
           </KakaoMap>
@@ -62,7 +70,7 @@ import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import { CultureAxios } from "@/util/http-culture";
 import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
-import { Spin } from "ant-design-vue";
+import { Modal, Spin } from "ant-design-vue";
 
 import OpenAI from "openai";
 
@@ -70,6 +78,7 @@ import emptyHeart from "../assets/emptyheart.png";
 import filledHeart from "../assets/filledheart.png";
 import { Axios } from "@/util/http-common";
 import { useAuthStore } from "@/stores/auth";
+import StarRating from 'vue-star-rating'
 
 const route = useRoute();
 const CODENAME = route.params.CODENAME;
@@ -325,6 +334,21 @@ const coordinate = ref({
   lat: 37.566826,
   lng: 126.9786567,
 });
+
+// star rating method
+
+const setRating = (rating) => {
+  Modal.confirm({
+    title: '평가',
+    content: `이 공연에 ${rating} 점을 주겠습니까?`,
+    onOk() {
+      console.log(rating, "점을 매김")
+    },
+    onCancel() {
+      console.log("취소");
+    }
+  })
+}
 
 onMounted(() => {
   getMemberDetails();
