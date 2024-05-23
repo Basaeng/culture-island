@@ -81,7 +81,7 @@ watch(
   () => article.value.content,
   (value) => {
     let len = value.length;
-    if (len == 0 || len > 500) {
+    if (len == 0) {
       contentErrMsg.value = "내용을 확인해 주세요!!!";
     } else contentErrMsg.value = "";
   },
@@ -225,6 +225,8 @@ function onSubmit() {
   article.value.name = member.value.name;
   article.value.memberId = member.value.id;
   article.value.content = quillState.content;
+
+  console.log(article.value);
 
   if (subjectErrMsg.value) {
     alert(subjectErrMsg.value);
