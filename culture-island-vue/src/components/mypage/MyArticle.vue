@@ -34,28 +34,29 @@ const member = ref({});
 
 const getArticleList = () => {
   console.log("서버에서 글목록 얻어오자!!!", param.value);
-  http.get(`/member/myarticles`, {
-    params: {
-      pgno: param.value.pgno,
-      spp: param.value.spp,
-      key: param.value.key,
-      word: param.value.word,
-      type: param.value.type,
-    },
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
-      'Content-Type': 'application/json',
-    }
-  })
-  .then(({ data }) => {
-    console.log(data);
-    articles.value = data.articles;
-    currentPage.value = data.currentPage;
-    totalPage.value = data.totalPageCount;
-  })
-  .catch((error) => {
-    console.error("Error while getting Article", error);
-  });
+  http
+    .get(`/member/myarticles`, {
+      params: {
+        pgno: param.value.pgno,
+        spp: param.value.spp,
+        key: param.value.key,
+        word: param.value.word,
+        type: param.value.type,
+      },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        "Content-Type": "application/json",
+      },
+    })
+    .then(({ data }) => {
+      console.log(data);
+      articles.value = data.articles;
+      currentPage.value = data.currentPage;
+      totalPage.value = data.totalPageCount;
+    })
+    .catch((error) => {
+      console.error("Error while getting Article", error);
+    });
 };
 
 const selectedType = (type) => {
@@ -77,26 +78,27 @@ const moveWrite = () => {
 const [api, contextHolder] = notification.useNotification();
 const open = (placement) => openNotification(placement);
 const openNotification = (placement) => {
-  http.get(`member/me`, {
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
-    },
-  })
-  .then(({ data }) => {
-    member.value = data;
-    moveWrite();
-  })
-  .catch((error) => {
-    api.info({
-      message: `로그인 필요`,
-      description: "로그인이 필요한 기능입니다 로그인을 해주세요",
-      placement,
-      icon: () =>
-        h(WarningOutlined, {
-          style: "color: #920101",
-        }),
+  http
+    .get(`member/me`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    })
+    .then(({ data }) => {
+      member.value = data;
+      moveWrite();
+    })
+    .catch((error) => {
+      api.info({
+        message: `로그인 필요`,
+        description: "로그인이 필요한 기능입니다 로그인을 해주세요",
+        placement,
+        icon: () =>
+          h(WarningOutlined, {
+            style: "color: #920101",
+          }),
+      });
     });
-  });
 };
 </script>
 
@@ -104,7 +106,7 @@ const openNotification = (placement) => {
   <div class="container mt-5">
     <div class="mb-5">
       <h3 class="my-3 py-3 shadow-sm bg-light text-center">
-          <mark class="island_mark_style">내 게시글</mark>
+        <mark class="island_mark_style">내 게시글</mark>
       </h3>
     </div>
     <div class="row">

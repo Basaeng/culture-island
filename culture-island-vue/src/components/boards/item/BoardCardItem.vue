@@ -39,7 +39,21 @@ const moveDetail = (article) => {
     </template>
     <a-card-meta :title="article.subject">
       <template #avatar>
-        <a-avatar>
+        <div v-if="article.memberId == 5">
+          <img
+            src="@/assets/mo.jpg"
+            style="border-radius: 50%; height: 40px; width: 40px"
+            alt="프로필"
+          />
+        </div>
+        <div v-else-if="article.memberId == 8">
+          <img
+            src="@/assets/park.jpg"
+            style="border-radius: 50%; height: 40px; width: 40px"
+            alt="프로필"
+          />
+        </div>
+        <a-avatar v-else>
           <template #icon>
             <UserOutlined />
           </template>
