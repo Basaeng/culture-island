@@ -27,9 +27,9 @@ const isSearchLoading = ref(false); // 검색 로딩 상태를 위한 변수 추
 const param = ref({
   pgno: currentPage.value,
   spp: VITE_ARTICLE_LIST_SIZE,
-  key: route.params.word || "",
-  word: route.params.word || "",
-  type: props.selectedType || route.params.type || "all",
+  word: route.params.keyword || "",
+  // type: props.selectedType || route.params.type || "all",
+  type: props.selectedType ? props.selectedType.join(",") : route.params.type || "all",
 });
 
 const setDefaultParams = () => {
@@ -41,6 +41,7 @@ const setDefaultParams = () => {
 onMounted(() => {
   setDefaultParams();
   fetchCultureList();
+  console.log(route.params)
 });
 
 watch(
@@ -55,7 +56,8 @@ watch(
 watch(
   () => props.selectedType,
   (newType) => {
-    param.value.type = newType || "all";
+    // param.value.type = newType || "all";
+    param.value.type = newType ? newType.join(",") : "all";
     fetchCultureList();
   }
 );
