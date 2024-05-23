@@ -50,7 +50,7 @@ const moveDetail = (article) => {
           <div class="col">
             {{ article.name }}
           </div>
-          <div class="col">조회수 : {{ article.hit }}</div>
+          <div class="col">views : {{ article.hit }}</div>
         </div>
       </template>
     </a-card-meta>
