@@ -6,7 +6,11 @@ const searchValue = ref("");
 const router = useRouter();
 
 const getCultureList = () => {
-  router.push;
+  router.push({ path: `/search/list/1/all/${searchValue.value}` });
+};
+
+const removeValue = () => {
+  searchValue.value = "";
 };
 </script>
 
@@ -23,11 +27,11 @@ const getCultureList = () => {
         <input
           class="form-control home-search"
           type="text"
-          :value="searchValue"
+          v-model="searchValue"
           placeholder="공연을 검색해보세요"
           aria-label=".form-control-lg example"
         />
-        <button class="btn btn-light search-button" type="button">
+        <button class="btn btn-light search-button" type="button" @click="removeValue">
           <img class="search-img" src="@/assets/close-button-icon.png" alt="search" />
         </button>
       </div>
