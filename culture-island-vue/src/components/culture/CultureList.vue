@@ -27,9 +27,9 @@ const isSearchLoading = ref(false); // 검색 로딩 상태를 위한 변수 추
 const param = ref({
   pgno: currentPage.value,
   spp: VITE_ARTICLE_LIST_SIZE,
-  key: route.params.word || "",
-  word: route.params.word || "",
-  type: props.selectedType || route.params.type || "all",
+  word: route.params.keyword || "",
+  // type: props.selectedType || route.params.type || "all",
+  type: props.selectedType ? props.selectedType.join(",") : route.params.type || "all",
 });
 
 const setDefaultParams = () => {
@@ -41,6 +41,7 @@ const setDefaultParams = () => {
 onMounted(() => {
   setDefaultParams();
   fetchCultureList();
+  console.log(route.params)
 });
 
 watch(
@@ -55,7 +56,8 @@ watch(
 watch(
   () => props.selectedType,
   (newType) => {
-    param.value.type = newType || "all";
+    // param.value.type = newType || "all";
+    param.value.type = newType ? newType.join(",") : "all";
     fetchCultureList();
   }
 );
@@ -73,9 +75,11 @@ const fetchCultureList = async () => {
 
   try {
     const { data } = await http.get(apiUrl);
+    
     if (data.culturalEventInfo && data.culturalEventInfo.row.length > 0) {
+      console.log("hello:", data.culturalEventInfo)
       items.value = data.culturalEventInfo.row;
-      totalPage.value = Math.ceil(data.total / pagesize) || 0;
+      totalPage.value = Math.ceil(data.culturalEventInfo.list_total_count / pagesize) || 0;
       noDataMessage.value = "";
     } else {
       items.value = [];
@@ -136,7 +140,7 @@ const onPageChange = (val) => {
               </form>
             </div>
           </div>
-          <div class="row d-flex justify-content-end">
+          <div class="row d-flex justify-content-start">
             <div v-if="noDataMessage" class="col d-flex justify-content-center">
               <p>{{ noDataMessage }}</p>
             </div>
@@ -149,7 +153,9 @@ const onPageChange = (val) => {
           <a-pagination
             v-model:current="currentPage"
             :total="totalPage * 10"
+            :pagesize="10"
             @change="onPageChange"
+            :showSizeChanger="false"
           />
         </div>
         <div class="col-1"></div>

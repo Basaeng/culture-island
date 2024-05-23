@@ -58,16 +58,18 @@
 </template>
 
 <script setup>
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import { CultureAxios } from "@/util/http-culture";
 import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
 import { Spin } from "ant-design-vue";
+
 import OpenAI from "openai";
 
 import emptyHeart from "../assets/emptyheart.png";
 import filledHeart from "../assets/filledheart.png";
 import { Axios } from "@/util/http-common";
+import { useAuthStore } from "@/stores/auth";
 
 const route = useRoute();
 const CODENAME = route.params.CODENAME;
@@ -76,6 +78,8 @@ const DATE = route.params.DATE;
 
 const serverhttp = Axios();
 const http = CultureAxios();
+const authStore = useAuthStore();
+const router = useRouter();
 
 const items = ref([]);
 const noDataMessage = ref("");
@@ -174,9 +178,13 @@ const getMemberDetails = () => {
       getCultureDetail();
     })
     .catch((error) => {
-      console.error("Failed to fetch user details", error);
-    });
+    authStore.clearToken();
+      alert("잘못된 접근이거나 토큰이 만료되었습니다.")
+    router.push({name: "home"})
+    console.error('Failed to fetch user details', error);
+  })
 };
+
 
 const toggleHeart = () => {
   if (!isHeartFilled.value) {
