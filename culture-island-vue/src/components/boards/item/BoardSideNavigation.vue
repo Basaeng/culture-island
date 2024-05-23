@@ -52,23 +52,15 @@ const onOpenChange = (openKeys) => {
 
 <template>
   <div class="col-sm-2 align-middle" @click="navClick">
-    <a-config-provider
-      :theme="{
-        token: {
-          colorPrimary: '#920101',
-        },
-      }"
-    >
-      <a-menu
-        v-model:selectedKeys="state.selectedKeys"
-        class="island_color"
-        style="width: 256px"
-        mode="inline"
-        :open-keys="state.openKeys"
-        :items="items"
-        @openChange="onOpenChange"
-      ></a-menu>
-    </a-config-provider>
+    <a-menu
+      v-model:selectedKeys="state.selectedKeys"
+      class="island_color"
+      style="width: 256px"
+      mode="inline"
+      :open-keys="state.openKeys"
+      :items="items"
+      @openChange="onOpenChange"
+    ></a-menu>
   </div>
 </template>
 
