@@ -104,7 +104,7 @@ const openNotification = (placement) => {
   <div class="container mt-5">
     <div class="mb-5">
       <h3 class="my-3 py-3 shadow-sm bg-light text-center">
-          <mark class="island_mark_style">관심 공연</mark>
+          <mark class="island_mark_style">내 게시글</mark>
       </h3>
     </div>
     <div class="row">

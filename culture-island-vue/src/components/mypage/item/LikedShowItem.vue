@@ -6,7 +6,7 @@ const props = defineProps({ likedShow: Object });
 const router = useRouter();
 
 const removeSpecialChars = (str) => {
-  return str.replace(/[^a-zA-Z0-9가-힣,:-\s]/g, "")
+  return str.replace(/[^a-zA-Z0-9가-힣,:-?\s]/g, "")
 };
 
 const processCODENAME = (str) => {

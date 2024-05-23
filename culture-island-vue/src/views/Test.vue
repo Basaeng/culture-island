@@ -1,16 +1,16 @@
-<script setup>
-import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
-const coordinate = {
-  lat: 37.566826,
-  lng: 126.9786567
-};
-</script>
-
 <template>
-  <KakaoMap :lat="coordinate.lat" :lng="coordinate.lng" :draggable="true">
-    <KakaoMapMarker :lat="coordinate.lat" :lng="coordinate.lng"></KakaoMapMarker>
-  </KakaoMap>
+  <div>
+    <star-rating :increment="0.5" />
+  </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import StarRating from 'vue-star-rating';
+
+const rating = ref(0);
+
+const handleRatingChange = (newRating) => {
+  rating.value = newRating;
+};
 </script>
