@@ -1,12 +1,15 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { CultureAxios } from '@/util/http-culture';
-import { KakaoMap, KakaoMapInfoWindow, KakaoMapMarker } from 'vue3-kakao-maps';
+import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
 import { Spin } from 'ant-design-vue';
 
 const http = CultureAxios();
+const clusterMarkerList = ref([]);
 const markerList = ref([]);
+
 const isLoading = ref(true); // 로딩 상태를 위한 변수 추가
+const currentZoomLevel = ref(14);
 
 const coordinate = ref({
   lat: 37.566826,
@@ -24,29 +27,32 @@ const errorCallback = (err) => {
   console.error(`Error: ${err.message}`);
 };
 
-const infoWindow = ref(null);
-
-const closeInfoWindow = () => {
-  if (infoWindow.value) {
-    infoWindow.value.close();
-  }
-};
-
 const getShowInfos = () => {
   http.get(`/1/1000`)
     .then(({ data }) => {
-      markerList.value = data.culturalEventInfo.row.map(itemData => ({
+      console.log(data.culturalEventInfo.row);
+      clusterMarkerList.value = data.culturalEventInfo.row.map(itemData => ({
         lat: parseFloat(itemData.LOT),
         lng: parseFloat(itemData.LAT),
         infoWindow: {
-          content: `<div>hello</div>`, // 인포윈도우의 내용 설정
-          visible: true
+          content: `          <div style="display: flex; align-items: flex-start;">
+              <img src="${itemData.MAIN_IMG}" alt="${itemData.TITLE}" style="width: 60px; height: 60px; margin-right: 10px;">
+              <div>
+                <h3 style="margin: 0; font-size: 16px;">${itemData.TITLE}</h3>
+                <p style="margin: 0; font-size: 12px;">${itemData.CODENAME}</p>
+                <p style="margin: 0; font-size: 12px;">날짜: ${itemData.DATE}</p>
+                <p style="margin: 0; font-size: 12px;">장소: ${itemData.PLACE}</p>
+                <p style="margin: 0; font-size: 12px;">요금: ${itemData.USE_FEE}</p>
+                <a href="${itemData.ORG_LINK}" target="_blank" style="font-size: 12px;">자세히 보기</a>
+              </div>
+            </div>`, // 인포윈도우의 내용 설정
+          visible: false,
         },
         draggable: true,
         clickable: true,
         visible: true,
       }));
-      console.log('Markers loaded:', markerList.value); // 마커 목록 출력
+      console.log('Markers loaded:', clusterMarkerList.value); // 마커 목록 출력
     })
     .catch(error => {
       console.error('Error fetching show infos:', error);
@@ -61,6 +67,14 @@ const clusterer = ref(null);
 
 const onLoadKakaoMap = (mapRef) => {
   map.value = mapRef;
+
+  kakao.maps.event.addListener(map.value, 'zoom_changed', () => {
+    currentZoomLevel.value = map.value.getLevel();
+  });
+
+  if (currentZoomLevel < 6){
+    clusterMarkerList.value = null;
+  }
 };
 
 const onLoadKakaoMapMarkerCluster = (clustererRef) => {
@@ -88,6 +102,11 @@ onMounted(() => {
   getShowInfos();
 });
 
+const onClickKakaoMapMarker = (marker) => {
+  console.log(currentZoomLevel.value)
+  marker.infoWindow.visible = !marker.infoWindow.visible;
+};
+
 const param = ref({
   key: "",
   word: "",
@@ -97,7 +116,7 @@ const param = ref({
 
 <template>
   <a-spin :spinning="isLoading" tip="불러오는 중..." size="large">
-    <div v-if="markerList.length > 0">
+    <div v-if="clusterMarkerList.length > 0">
       <div class="form-container d-flex justify-content-center">
         <form class="d-flex justify-content-center mt-2" style="width:50%">
           <div class="input-group input-group-sm">
@@ -119,11 +138,22 @@ const param = ref({
           :lng="coordinate.lng"
           :level="14"
           class="kakao-map"
-          :markerCluster="{ markers: markerList }"
+          :markerCluster="{ markers: clusterMarkerList }"
           :disableClickZoom="true"
           @onLoadKakaoMapMarkerCluster="onLoadKakaoMapMarkerCluster"
           @onLoadKakaoMap="onLoadKakaoMap"
         >
+          <KakaoMapMarker 
+            v-for="(marker, index) in clusterMarkerList" 
+            v-if="currentZoomLevel < 6"
+            :draggable="true"
+            :lat="marker.lat"
+            :lng="marker.lng"
+            :clickable="true"
+            :infoWindow="{ content: marker.infoWindow.content, visible: marker.infoWindow.visible }"
+            @onClickKakaoMapMarker="() => onClickKakaoMapMarker(marker)"
+            :key="index"
+          />
         </KakaoMap>
       </div>
     </div>
@@ -132,7 +162,6 @@ const param = ref({
     </div>
   </a-spin>
 </template>
-
 
 <style scoped>
 .ant-spin {
